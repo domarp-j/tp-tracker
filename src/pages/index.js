@@ -1,32 +1,30 @@
-import React from "react"
-import { graphql } from "gatsby"
+import React, { useState, useEffect } from "react"
 
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
-export const query = graphql`
-  query TPLocations {
-    allTpLocation {
-      nodes {
-        address
-        available
-        id
-        store
-      }
-    }
-  }
-`
+const IndexPage = () => {
+  const [tpLocations, setTpLocations] = useState([])
 
-const IndexPage = ({ data }) => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div>
-      {JSON.stringify(data.allTpLocation.nodes)}
-    </div>
-  </Layout>
-)
+  useEffect(() => {
+    fetch(process.env.GATSBY_API_URL)
+      .then(res => res.json())
+      .then(res => {
+        setTpLocations(res)
+      })
+  }, [])
+
+  return (
+    <Layout>
+      <SEO title="Home" />
+      <h1>Hi people</h1>
+      <p>Welcome to your new Gatsby site.</p>
+      <p>Now go build something great.</p>
+      <div>
+        {JSON.stringify(tpLocations)}
+      </div>
+    </Layout>
+  )
+}
 
 export default IndexPage
