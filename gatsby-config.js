@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `Toilet Paper Tracker`,
+    description: `Track availability of toilet paper at Walmart and Target stores in the DC-Maryland-Virginia area`,
+    author: `@sepehr500 and @domarp-j`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
