@@ -1,12 +1,13 @@
 /**
  * TODO:
- * - Use GMaps static API instead? More forgiving usage rates.
  * - Add loading states
  *   - Loading page
  *   - Showing store on map
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
+ * - Make markers clickable
+ * - Add "reset" button to show all markers again
  */
 
 import React, { useState, useEffect } from "react"
@@ -224,7 +225,7 @@ const IndexPage = () => {
                     className="text-blue-600 underline"
                     onClick={() => {
                       showAddressOnMap(tpLocation.address)
-                      setZoom(12)
+                      setZoom(15)
                     }}
                   >
                     Show on map
