@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import './styles.css'
+import "./styles.css"
 
 const Layout = ({ children }) => (
   <div className="mx-auto max-w-screen-md">
