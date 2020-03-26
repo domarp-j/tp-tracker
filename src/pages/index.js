@@ -8,6 +8,7 @@
  *   - Failed to fetch stores
  * - Make markers clickable
  * - Add "reset" button to show all markers again
+ * - Optimize to reduce GMaps API calls
  */
 
 import React, { useState, useEffect } from "react"
@@ -26,8 +27,6 @@ const IN_STOCK = "IN_STOCK"
 const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE"
 const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE"
 const OUT_OF_STOCK = "OUT_OF_STOCK"
-
-const MAX_MARKER_COUNT = 3
 
 // Washington Monument coordinates
 const DEFAULT_CENTER_COORDS = {
@@ -190,7 +189,7 @@ const IndexPage = () => {
           ></input>
           <div className="text-sm italic mt-2">
             <span className="font-semibold">BETA</span> - Currently supporting
-            the DC-Maryland-Virginia area
+            Target and Walmart stores in the DC-Maryland-Virginia area
           </div>
         </div>
 
