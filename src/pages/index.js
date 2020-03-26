@@ -134,7 +134,16 @@ const IndexPage = () => {
               }`}
             >
               <div className="text-xl">{tpLocation.store}</div>
-              <div className="text-gray-700">{tpLocation.address}</div>
+              <div className="text-gray-700 mt-1">{tpLocation.address}</div>
+              {[IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(
+                tpLocation.available
+              ) && (
+                <div className="mt-1">
+                  <a href="#" role="button" className="text-blue-600 underline">
+                    Show on map
+                  </a>
+                </div>
+              )}
               <div className="absolute top-0 right-0 p-4">
                 {AVAILABILITY[tpLocation.available] || tpLocation.available}
               </div>
