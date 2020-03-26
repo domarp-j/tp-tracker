@@ -9,9 +9,10 @@
  * - Make markers clickable
  * - Add "reset" button to show all markers again
  * - Optimize to reduce GMaps API calls
+ * - Identify currently-focused address in list
  */
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import axios from "axios"
 import { compose } from "ramda"
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
@@ -125,11 +126,14 @@ const IndexPage = () => {
   const [markers, setMarkers] = useState([])
   const [zoom, setZoom] = useState(10)
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS)
+  const mapRef = useRef(null)
 
   const showAddressOnMap = async address => {
+    scrollToMap()
     addressToCoords(address).then(coords => {
       setMarkers([coords])
       setCenter(coords)
+      setZoom(15)
     })
   }
 
@@ -150,6 +154,11 @@ const IndexPage = () => {
     ).then(coords => setMarkers(coords))
 
     return locations
+  }
+
+  const scrollToMap = () => {
+    if (!mapRef) return
+    window.scrollTo(0, mapRef.current.offsetTop)
   }
 
   useEffect(() => {
@@ -202,6 +211,7 @@ const IndexPage = () => {
           }}
           zoom={zoom}
           center={center}
+          ref={mapRef}
         >
           {markers.map((marker, i) => (
             <Marker key={i} position={marker} />
@@ -224,7 +234,6 @@ const IndexPage = () => {
                     className="text-blue-600 underline"
                     onClick={() => {
                       showAddressOnMap(tpLocation.address)
-                      setZoom(15)
                     }}
                   >
                     Show on map
