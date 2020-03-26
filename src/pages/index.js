@@ -10,7 +10,7 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 /*******************************************************/
-// Data Definitions
+// Data Structures
 /*******************************************************/
 
 const IN_STOCK = "IN_STOCK"
@@ -26,19 +26,44 @@ const SORT_WEIGHT = {
   [OUT_OF_STOCK]: 3,
 }
 
+// Convert availability to JSX
+const AVAILABILITY = {
+  [IN_STOCK]: (
+    <div class="bg-green-500 text-white text-sm font-semibold py-1 px-2 rounded">
+      In Stock
+    </div>
+  ),
+  [LIMITED_STOCK_SEE_STORE]: (
+    <div class="bg-yellow-600 text-white text-sm font-semibold py-1 px-2 rounded">
+      Limited Stock
+    </div>
+  ),
+  [NOT_SOLD_IN_STORE]: (
+    <div class="bg-orange-400 text-white text-sm font-semibold py-1 px-2 rounded">
+      Not Sold in Store
+    </div>
+  ),
+  [OUT_OF_STOCK]: (
+    <div class="bg-gray-600 text-white text-sm font-semibold py-1 px-2 rounded">
+      Out of Stock
+    </div>
+  ),
+}
+
 /*******************************************************/
 // Functions
 /*******************************************************/
 
-// Convert string into SCREAMING_SNAKE_CASE
-const toScreamingSnake = str => str.toUpperCase().replace(/\s/, "_")
+const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
-// Map through TP locations to format data
+// Convert string into SCREAMING_SNAKE_CASE
+const screamingSnake = str => str.toUpperCase().replace(/\s/g, "_")
+
 const formatTpLocations = locations =>
   locations.map(location => ({
     ...location,
-    store: `${location.store[0].toUpperCase()}${location.store.slice(1)}`,
-    available: toScreamingSnake(location.available),
+    store: capitalize(location.store),
+    available: screamingSnake(location.available),
   }))
 
 // Sort given TP locations by availability
@@ -91,7 +116,7 @@ const IndexPage = () => {
           mapContainerStyle={{
             height: "400px",
             maxWidth: "800px",
-            marginTop: "48px",
+            marginTop: "64px",
           }}
           zoom={12}
           center={{
@@ -100,22 +125,22 @@ const IndexPage = () => {
           }}
         />
 
-        <div className="border-2 border-gray-400">
+        <div className="border-l-2 border-r-2 border-t-0 border-b-0 border-gray-400">
           {tpLocations.map(tpLocation => (
             <div
               key={`${tpLocation.store} ${tpLocation.id} ${tpLocation.address}`}
-              className="border-b-2 border-gray-400 p-4"
+              className={`border-b-2 border-gray-400 p-4 relative ${
+                tpLocation.available === OUT_OF_STOCK ? "opacity-50" : ""
+              }`}
             >
-              <div>{tpLocation.store}</div>
-              <div>{tpLocation.address}</div>
-              <div>{tpLocation.available}</div>
+              <div className="text-xl">{tpLocation.store}</div>
+              <div className="text-gray-700">{tpLocation.address}</div>
+              <div className="absolute top-0 right-0 p-4">
+                {AVAILABILITY[tpLocation.available] || tpLocation.available}
+              </div>
             </div>
           ))}
         </div>
-
-        {/* <div className="mt-20">
-          {JSON.stringify(tpLocations)}
-        </div> */}
       </LoadScript>
     </Layout>
   )
