@@ -219,7 +219,7 @@ const IndexPage = () => {
           ))}
           <button
             onClick={resetMap}
-            className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-500"
+            className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-400"
             style={{
               bottom: "4px",
               left: "50%",
