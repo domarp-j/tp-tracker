@@ -34,6 +34,7 @@ exports.onPostBuild = async () => {
     projectId: process.env.GATSBY_FIREBASE_PROJECT_ID,
   });
 
+  console.log("~~~~~~~~~~~~~~~~~~~");
   console.log("Fetching geocode data from Firestore...");
 
   const snapshot = await firebase
@@ -43,6 +44,7 @@ exports.onPostBuild = async () => {
 
   let docData;
 
+  console.log("~~~~~~~~~~~~~~~~~~~");
   console.log("Saving geocode data to static JSON...");
 
   fs.writeFile(
@@ -58,14 +60,15 @@ exports.onPostBuild = async () => {
       }, {}) || {}
     ),
     err => {
+      console.log("~~~~~~~~~~~~~~~~~~~");
       if (err) {
         console.error(
           "Something went wrong while trying to create geocode JSON. ",
           err
         );
+      } else {
+        console.log("...done!");
       }
-
-      console.log("...done!");
     }
   );
 };

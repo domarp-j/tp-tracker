@@ -14,15 +14,19 @@ import axios from "axios";
  *   coordinates, and save the coordinates to Firebase and local storage for
  *   later use.
  *
+ * Why a static JSON file?
+ * - The JSON file will be updated on every build and will be relatively up to
+ *   date with geocode data. Since this app is scoped to the DMV area (at least
+ *   for now), the static JSON file will be quite small.
+ *
  * Why local storage?
- * - By saving the coordinates to local storage and checking it first, the client
- *   does not have to repeatedly reach out to any external services to get
- *   coordinate data.
+ * - This prevents executing multiple unnecessary reads on the Firestore database.
  *
  * Why Firestore?
  * - Firestore has much more forgiving rate limits than Google Maps. The
  *   occasional fetch from the Firestore database is much cheaper than a Geocoding
- *   API query.
+ *   API query. Regardless, external calls to this store should be limited (and
+ *   are limited with the use of local storage).
  */
 
 /*****************************************************************/
@@ -110,6 +114,8 @@ const addressGeocode = async address => {
 
 export default async address => {
   let coords;
+
+  console.log("~~~~~~~~~~~~~~~~~~~");
 
   console.log("GC1-js...");
   coords = checkGeocodeJson(address);
