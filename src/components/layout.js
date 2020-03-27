@@ -6,7 +6,7 @@ import "./styles.css";
 const Layout = ({ children }) => (
   <div className="mx-auto max-w-screen-md">
     <main>{children}</main>
-    <footer className="text-center mt-12 mb-4">
+    <footer className="text-center mt-4 mb-4">
       © {new Date().getFullYear()}, Built with
       {` `}
       <a href="https://www.gatsbyjs.org">Gatsby</a>
