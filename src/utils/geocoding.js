@@ -3,9 +3,13 @@ import axios from "axios";
 
 export default async address => {
   try {
+    console.log("GC1-ls...");
+
     // Check local storage first for coordinates
     let coords = localStorage.getItem(`tp tracker ${address}`);
     if (coords) return JSON.parse(coords);
+
+    console.warn("GC1-ls failed. GC2-fs...");
 
     // Check firestore
     coords = await firestore
@@ -23,6 +27,8 @@ export default async address => {
       return coords.data();
     }
 
+    console.warn("GC2-fs failed. GC3-gm...");
+
     // Since address coordinates aren't stored anywhere, call Geocode API
     const geocodeRes = await axios.get(
       "https://maps.googleapis.com/maps/api/geocode/json",
@@ -33,18 +39,23 @@ export default async address => {
         },
       }
     );
-    coords = geocodeRes.data.results[0].geometry.location;
 
-    // Store coordinates in firestore
-    firestore
-      .collection("coordinates")
-      .doc(address)
-      .set(coords);
+    if (geocodeRes.data.error_message) {
+      throw new Error("API ERROR");
+    } else {
+      coords = geocodeRes.data.results[0].geometry.location;
 
-    // Store coordinates in local storage
-    localStorage.setItem(`tp tracker ${address}`, JSON.stringify(coords));
+      // Store coordinates in firestore
+      firestore
+        .collection("coordinates")
+        .doc(address)
+        .set(coords);
 
-    return coords;
+      // Store coordinates in local storage
+      localStorage.setItem(`tp tracker ${address}`, JSON.stringify(coords));
+
+      return coords;
+    }
   } catch (error) {
     console.error(error);
   }
