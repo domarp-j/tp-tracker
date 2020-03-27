@@ -17,7 +17,7 @@ exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
   }
 };
 
-exports.onPostBuild = async () => {
+exports.onPreBootstrap = async () => {
   const fs = require("fs");
   const util = require("util");
 
