@@ -111,22 +111,22 @@ const addressGeocode = async address => {
 export default async address => {
   let coords;
 
-  // console.log("GC1-js...");
+  console.log("GC1-js...");
   coords = checkGeocodeJson(address);
   if (coords) return coords;
 
-  // console.log("GC1-js failed. GC2-ls...");
+  console.log("GC1-js failed. GC2-ls...");
   coords = checkLocalStorage(address);
   if (coords) return coords;
 
-  // console.log("GC2-ls failed. GC3-fs...");
+  console.log("GC2-ls failed. GC3-fs...");
   coords = await checkFirebase(address);
   if (coords) {
     saveToLocalStorage(address, coords);
     return coords;
   }
 
-  // console.log("GC3-fs failed. GC4-gm...");
+  console.log("GC3-fs failed. GC4-gm...");
   coords = await addressGeocode(address);
   if (coords) {
     saveToLocalStorage(address, coords);
