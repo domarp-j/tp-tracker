@@ -7,7 +7,6 @@
  *   - Maps unavailability
  *   - Failed to fetch stores
  * - Add "reset" button to reset center
- * - Optimize to reduce GMaps API calls
  * - Add a logo
  */
 
@@ -18,10 +17,11 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
+import firestore from "../utils/firebase";
 
-/********************************************************************************/
+/*****************************************************************/
 // Data Structures
-/********************************************************************************/
+/*****************************************************************/
 
 const IN_STOCK = "IN_STOCK";
 const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE";
@@ -43,33 +43,25 @@ const SORT_WEIGHT = {
   [OUT_OF_STOCK]: 3,
 };
 
+const BADGE_CLASSES = "text-white text-sm font-semibold py-1 px-2 rounded";
+
 // Given availability, return JSX for availability badge
-const AVAILABILITY = {
-  [IN_STOCK]: (
-    <div className="bg-green-500 text-white text-sm font-semibold py-1 px-2 rounded">
-      In Stock
-    </div>
-  ),
+const AVAILABILITY_BADGE = {
+  [IN_STOCK]: <div className={`bg-green-500 ${BADGE_CLASSES}`}>In Stock</div>,
   [LIMITED_STOCK_SEE_STORE]: (
-    <div className="bg-yellow-600 text-white text-sm font-semibold py-1 px-2 rounded">
-      Limited Stock
-    </div>
+    <div className={`bg-yellow-600 ${BADGE_CLASSES}`}>Limited Stock</div>
   ),
   [NOT_SOLD_IN_STORE]: (
-    <div className="bg-gray-600 text-white text-sm font-semibold py-1 px-2 rounded">
-      Not Sold in Store
-    </div>
+    <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Not Sold in Store</div>
   ),
   [OUT_OF_STOCK]: (
-    <div className="bg-gray-600 text-white text-sm font-semibold py-1 px-2 rounded">
-      Out of Stock
-    </div>
+    <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
   ),
 };
 
-/********************************************************************************/
+/*****************************************************************/
 // Functions
-/********************************************************************************/
+/*****************************************************************/
 
 // Map through TP locations and make formatting changes
 const formatTpLocations = locations =>
@@ -88,6 +80,7 @@ const sortTpLocations = locations =>
 // Sanitize data by removing any duplicate TP locations
 const removeDuplicateLocations = locations => {
   const addressCache = {};
+
   return locations.filter(loc => {
     if (addressCache[loc.address]) {
       return false;
@@ -104,6 +97,17 @@ const isAvailable = location =>
 // Convert human-readable address to coordinates using Google Maps Geocode API
 const addressToCoords = async address => {
   try {
+    console.log("querying firestore...");
+
+    let coords = await firestore
+      .collection("coordinates")
+      .doc(address)
+      .get();
+
+    if (coords.data()) return coords.data();
+
+    console.log("querying GMaps...");
+
     const req = await axios.get(
       "https://maps.googleapis.com/maps/api/geocode/json",
       {
@@ -113,15 +117,23 @@ const addressToCoords = async address => {
         },
       }
     );
-    return req.data.results[0].geometry.location;
+
+    coords = req.data.results[0].geometry.location;
+
+    firestore
+      .collection("coordinates")
+      .doc(address)
+      .set(coords);
+
+    return coords;
   } catch (error) {
     console.error(error);
   }
 };
 
-/********************************************************************************/
+/*****************************************************************/
 // Page
-/********************************************************************************/
+/*****************************************************************/
 
 const IndexPage = () => {
   const [tpLocations, setTpLocations] = useState([]);
@@ -155,13 +167,16 @@ const IndexPage = () => {
 
   const scrollToMap = () => {
     if (!mapRef) return;
+
     window.scrollTo(0, mapRef.current.offsetTop);
   };
 
   const handleZoomChanged = () => {
     if (!mapRef) return;
     if (!mapRef.current) return;
+
     const mapZoom = mapRef.current.state.map.zoom;
+
     if (mapZoom !== zoom) {
       setZoom(mapZoom);
     }
@@ -193,14 +208,14 @@ const IndexPage = () => {
         </div>
 
         <div className="mt-4 zip-code-input text-center">
-          <label htmlFor="zip-code">Enter your zip code:</label>
+          {/* <label htmlFor="zip-code">Enter your zip code:</label>
           <input
             disabled
             id="zip-code"
             className="mt-4 block mx-auto border-solid border-2 h-10 text-2xl text-center"
             style={{ maxWidth: 200 }}
             value="22180"
-          ></input>
+          ></input> */}
           <div className="text-sm italic mt-2">
             <span className="font-semibold">BETA</span> - Currently supporting
             Target and Walmart stores in the DC-Maryland-Virginia area
@@ -212,7 +227,7 @@ const IndexPage = () => {
           mapContainerStyle={{
             height: "400px",
             maxWidth: "800px",
-            marginTop: "44px",
+            marginTop: "16px",
           }}
           zoom={zoom}
           center={center}
@@ -251,7 +266,8 @@ const IndexPage = () => {
                 </div>
               )}
               <div className="absolute top-0 right-0 p-4">
-                {AVAILABILITY[tpLocation.available] || tpLocation.available}
+                {AVAILABILITY_BADGE[tpLocation.available] ||
+                  tpLocation.available}
               </div>
             </div>
           ))}
