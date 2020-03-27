@@ -1,9 +1,9 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "tp-tracker",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
+  "description": "Track availability of toilet paper at Walmart and Target stores in the DC-Maryland-Virginia area",
   "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Sepehr Sobhani & Pramod Jacob",
   "dependencies": {
     "@react-google-maps/api": "^1.8.6",
     "axios": "^0.19.2",
