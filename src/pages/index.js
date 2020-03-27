@@ -26,6 +26,7 @@ const IN_STOCK = "IN_STOCK";
 const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE";
 const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE";
 const OUT_OF_STOCK = "OUT_OF_STOCK";
+const UNKNOWN = "UNKNOWN";
 
 // Default center coordinates (at the Washington Monument)
 const DEFAULT_CENTER_COORDS = {
@@ -43,6 +44,7 @@ const SORT_WEIGHT = {
   [LIMITED_STOCK_SEE_STORE]: 2,
   [NOT_SOLD_IN_STORE]: 3,
   [OUT_OF_STOCK]: 4,
+  [UNKNOWN]: 5,
 };
 
 const BADGE_CLASSES = "text-white text-sm font-semibold py-1 px-2 rounded";
@@ -58,6 +60,7 @@ const AVAILABILITY_BADGE = {
   [OUT_OF_STOCK]: (
     <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
   ),
+  [UNKNOWN]: <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Unknown</div>,
 };
 
 /*****************************************************************/
@@ -81,8 +84,8 @@ const sortTpLocations = locations =>
     (locA, locB) => SORT_WEIGHT[locA.available] - SORT_WEIGHT[locB.available]
   );
 
-// Sanitize data by removing any duplicate TP locations
-const removeDuplicateLocations = locations => {
+// Filter out duplicate locations and locations with unknown TP availability
+const filterTpLocations = locations => {
   const addressCache = {};
 
   return locations.filter(loc => {
@@ -156,7 +159,7 @@ const IndexPage = () => {
       compose(
         setTpLocations,
         markTpLocations,
-        removeDuplicateLocations,
+        filterTpLocations,
         sortTpLocations,
         formatTpLocations
       )(res.data);
