@@ -6,33 +6,33 @@
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
- * - Add "reset" button to show all markers again
+ * - Add "reset" button to reset center
  * - Optimize to reduce GMaps API calls
- * - Identify currently-focused address in list
+ * - Add a logo
  */
 
-import React, { useState, useEffect, useRef } from "react"
-import axios from "axios"
-import { compose } from "ramda"
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { compose } from "ramda";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+import Layout from "../components/layout";
+import SEO from "../components/seo";
 
-/*******************************************************/
+/********************************************************************************/
 // Data Structures
-/*******************************************************/
+/********************************************************************************/
 
-const IN_STOCK = "IN_STOCK"
-const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE"
-const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE"
-const OUT_OF_STOCK = "OUT_OF_STOCK"
+const IN_STOCK = "IN_STOCK";
+const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE";
+const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE";
+const OUT_OF_STOCK = "OUT_OF_STOCK";
 
-// Default coordinates (at the Washington Monument)
+// Default center coordinates (at the Washington Monument)
 const DEFAULT_CENTER_COORDS = {
   lat: 38.8895,
   lng: -77.0353,
-}
+};
 
 // Apply weights to each availability type for sorting purposes
 // Lower sort weight -> higher priority
@@ -41,7 +41,7 @@ const SORT_WEIGHT = {
   [LIMITED_STOCK_SEE_STORE]: 1,
   [NOT_SOLD_IN_STORE]: 2,
   [OUT_OF_STOCK]: 3,
-}
+};
 
 // Given availability, return JSX for availability badge
 const AVAILABILITY = {
@@ -65,11 +65,11 @@ const AVAILABILITY = {
       Out of Stock
     </div>
   ),
-}
+};
 
-/*******************************************************/
+/********************************************************************************/
 // Functions
-/*******************************************************/
+/********************************************************************************/
 
 // Map through TP locations and make formatting changes
 const formatTpLocations = locations =>
@@ -77,29 +77,29 @@ const formatTpLocations = locations =>
     ...loc,
     store: `${loc.store[0].toUpperCase()}${loc.store.slice(1)}`,
     available: loc.available.toUpperCase().replace(/\s/g, "_"),
-  }))
+  }));
 
 // Sort TP locations based on weights specified in SORT_WEIGHT mapping
 const sortTpLocations = locations =>
   locations.sort(
     (locA, locB) => SORT_WEIGHT[locA.available] - SORT_WEIGHT[locB.available]
-  )
+  );
 
 // Sanitize data by removing any duplicate TP locations
 const removeDuplicateLocations = locations => {
-  const addressCache = {}
+  const addressCache = {};
   return locations.filter(loc => {
     if (addressCache[loc.address]) {
-      return false
+      return false;
     } else {
-      addressCache[loc.address] = true
-      return true
+      addressCache[loc.address] = true;
+      return true;
     }
-  })
-}
+  });
+};
 
 const isAvailable = location =>
-  [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location)
+  [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location);
 
 // Convert human-readable address to coordinates using Google Maps Geocode API
 const addressToCoords = async address => {
@@ -112,62 +112,60 @@ const addressToCoords = async address => {
           key: process.env.GATSBY_GMAPS_KEY,
         },
       }
-    )
-
-    return req.data.results[0].geometry.location
+    );
+    return req.data.results[0].geometry.location;
   } catch (error) {
-    console.error(error)
-    // TODO: Error handling
+    console.error(error);
   }
-}
+};
 
-/*******************************************************/
+/********************************************************************************/
 // Page
-/*******************************************************/
+/********************************************************************************/
 
 const IndexPage = () => {
-  const [tpLocations, setTpLocations] = useState([])
-  const [markers, setMarkers] = useState([])
-  const [zoom, setZoom] = useState(10)
-  const [center, setCenter] = useState(DEFAULT_CENTER_COORDS)
-  const mapRef = useRef(null)
+  const [tpLocations, setTpLocations] = useState([]);
+  const [markers, setMarkers] = useState([]);
+  const [zoom, setZoom] = useState(10);
+  const [center, setCenter] = useState(DEFAULT_CENTER_COORDS);
+  const mapRef = useRef(null);
 
   const showAddressOnMap = address => {
-    scrollToMap()
+    scrollToMap();
     addressToCoords(address).then(coords => {
-      setCenter(coords)
-      setZoom(15)
-    })
-  }
+      setCenter(coords);
+      setZoom(15);
+    });
+  };
 
   const focusOnMarker = coords => {
-    setCenter(coords)
-    setZoom(15)
-  }
+    setCenter(coords);
+    setZoom(15);
+  };
 
   const markTpLocations = locations => {
     Promise.all(
       locations
         .filter(loc => isAvailable(loc.available))
         .map(loc => addressToCoords(loc.address))
-    ).then(coords => setMarkers(coords))
+    ).then(coords => setMarkers(coords));
 
-    return locations
-  }
+    return locations;
+  };
 
   const scrollToMap = () => {
-    if (!mapRef) return
-    window.scrollTo(0, mapRef.current.offsetTop)
-  }
+    if (!mapRef) return;
+    window.scrollTo(0, mapRef.current.offsetTop);
+  };
 
   const handleZoomChanged = () => {
-    if (!mapRef) return
-    if (!mapRef.current) return
-    const mapZoom = mapRef.current.state.map.zoom
+    if (!mapRef) return;
+    if (!mapRef.current) return;
+    const mapZoom = mapRef.current.state.map.zoom;
     if (mapZoom !== zoom) {
-      setZoom(mapZoom)
+      setZoom(mapZoom);
     }
-  }
+  };
 
   useEffect(() => {
     axios.get(process.env.GATSBY_API_URL).then(res => {
@@ -177,9 +175,9 @@ const IndexPage = () => {
         removeDuplicateLocations,
         sortTpLocations,
         formatTpLocations
-      )(res.data)
-    })
-  }, [])
+      )(res.data);
+    });
+  }, []);
 
   return (
     <Layout>
@@ -190,7 +188,6 @@ const IndexPage = () => {
         <SEO title="Home" />
 
         <div className="home-header mt-6 mx-auto flex items-center justify-center">
-          {/* TODO: Add a logo */}
           {/* <div className="image-placeholder h-20 w-20 border-solid border-2"></div> */}
           <h1 className="text-3xl inline ml-3">Toilet Paper Tracker</h1>
         </div>
@@ -246,7 +243,7 @@ const IndexPage = () => {
                   <button
                     className="text-blue-600 underline"
                     onClick={() => {
-                      showAddressOnMap(tpLocation.address)
+                      showAddressOnMap(tpLocation.address);
                     }}
                   >
                     Show on map
@@ -261,7 +258,7 @@ const IndexPage = () => {
         </div>
       </LoadScript>
     </Layout>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;
