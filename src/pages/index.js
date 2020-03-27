@@ -126,7 +126,17 @@ const IndexPage = () => {
     Promise.all(
       locations
         .filter(loc => isAvailable(loc.available))
-        .map(loc => addressToCoords(loc.address))
+        .map(loc => {
+          // console.log("~~~~~~~~~~~~~~~~~~~");
+          if (loc.lat && loc.lng) {
+            // console.log("GC0-api");
+            return {
+              lat: parseFloat(loc.lat),
+              lng: parseFloat(loc.lng),
+            };
+          }
+          return addressToCoords(loc.address);
+        })
     ).then(coords => setMarkers(coords));
 
     return locations;
@@ -183,8 +193,8 @@ const IndexPage = () => {
           Outwit the hoaders. Find available toilet paper near you.
         </div>
         <div className="text-sm italic mt-4 p-2 text-center">
-          Currently shows Target and Walmart stores in the DC-Maryland-Virginia
-          area
+          Currently supports showing Target, Walmart, and Walgreens stores in
+          the DC-Maryland-Virginia area
         </div>
 
         {/* <div className="mt-4 zip-code-input text-center">
