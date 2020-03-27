@@ -2,8 +2,6 @@
 // Exports
 /*****************************************************************/
 
-const fs = require("fs");
-
 exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
   if (stage === "build-html") {
     actions.setWebpackConfig({
@@ -20,6 +18,9 @@ exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
 };
 
 exports.onPostBuild = async () => {
+  const fs = require("fs");
+  const util = require("util");
+
   const firebase = require("firebase/app");
 
   require("firebase/firestore");
@@ -47,28 +48,29 @@ exports.onPostBuild = async () => {
   console.log("~~~~~~~~~~~~~~~~~~~");
   console.log("Saving geocode data to static JSON...");
 
-  fs.writeFile(
-    "src/data/geocode.json",
-    JSON.stringify(
-      snapshot.docs.reduce((accum, doc) => {
-        docData = doc.data();
-        accum[docData.address] = {
-          lat: docData.lat,
-          lng: docData.lng,
-        };
-        return accum;
-      }, {}) || {}
-    ),
-    err => {
-      console.log("~~~~~~~~~~~~~~~~~~~");
-      if (err) {
-        console.error(
-          "Something went wrong while trying to create geocode JSON. ",
-          err
-        );
-      } else {
-        console.log("...done!");
-      }
-    }
-  );
+  const writeFile = util.promisify(fs.writeFile);
+
+  try {
+    await writeFile(
+      "src/data/geocode.json",
+      JSON.stringify(
+        snapshot.docs.reduce((accum, doc) => {
+          docData = doc.data();
+          accum[docData.address] = {
+            lat: docData.lat,
+            lng: docData.lng,
+          };
+          return accum;
+        }, {}) || {}
+      )
+    );
+
+    console.log("~~~~~~~~~~~~~~~~~~~");
+    console.log("JSON saved!");
+    console.log("~~~~~~~~~~~~~~~~~~~");
+  } catch (error) {
+    console.log("~~~~~~~~~~~~~~~~~~~");
+    console.log("writeFile error:", error);
+    console.log("~~~~~~~~~~~~~~~~~~~");
+  }
 };
