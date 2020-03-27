@@ -17,7 +17,7 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
-import firestore from "../utils/firebase";
+import addressToCoords from "../utils/geocoding";
 
 /*****************************************************************/
 // Data Structures
@@ -37,15 +37,14 @@ const DEFAULT_CENTER_COORDS = {
 // Apply weights to each availability type for sorting purposes
 // Lower sort weight -> higher priority
 const SORT_WEIGHT = {
-  [IN_STOCK]: 0,
-  [LIMITED_STOCK_SEE_STORE]: 1,
-  [NOT_SOLD_IN_STORE]: 2,
-  [OUT_OF_STOCK]: 3,
+  [IN_STOCK]: 1,
+  [LIMITED_STOCK_SEE_STORE]: 2,
+  [NOT_SOLD_IN_STORE]: 3,
+  [OUT_OF_STOCK]: 4,
 };
 
 const BADGE_CLASSES = "text-white text-sm font-semibold py-1 px-2 rounded";
 
-// Given availability, return JSX for availability badge
 const AVAILABILITY_BADGE = {
   [IN_STOCK]: <div className={`bg-green-500 ${BADGE_CLASSES}`}>In Stock</div>,
   [LIMITED_STOCK_SEE_STORE]: (
@@ -63,7 +62,10 @@ const AVAILABILITY_BADGE = {
 // Functions
 /*****************************************************************/
 
-// Map through TP locations and make formatting changes
+const isAvailable = location =>
+  [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location);
+
+// Map through TP locations and make some formatting changes
 const formatTpLocations = locations =>
   locations.map(loc => ({
     ...loc,
@@ -89,56 +91,6 @@ const removeDuplicateLocations = locations => {
       return true;
     }
   });
-};
-
-const isAvailable = location =>
-  [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location);
-
-// Convert human-readable address to coordinates using Google Maps Geocode API
-const addressToCoords = async address => {
-  try {
-    // Check local storage first for coordinates
-    let coords = localStorage.getItem(`tp tracker ${address}`);
-    if (coords) return JSON.parse(coords);
-
-    // Check firestore
-    coords = await firestore
-      .collection("coordinates")
-      .doc(address)
-      .get();
-    if (coords.data()) {
-      localStorage.setItem(
-        `tp tracker ${address}`,
-        JSON.stringify(coords.data())
-      );
-      return coords.data();
-    }
-
-    // Since address coordinates aren't stored, call Geocode API
-    const req = await axios.get(
-      "https://maps.googleapis.com/maps/api/geocode/json",
-      {
-        params: {
-          address,
-          key: process.env.GATSBY_GMAPS_KEY,
-        },
-      }
-    );
-    coords = req.data.results[0].geometry.location;
-
-    // Store coordinates in firestore
-    firestore
-      .collection("coordinates")
-      .doc(address)
-      .set(coords);
-
-    // Store coordinates in local storage
-    localStorage.setItem(`tp tracker ${address}`, JSON.stringify(coords));
-
-    return coords;
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 /*****************************************************************/
@@ -217,27 +169,30 @@ const IndexPage = () => {
           <h1 className="text-3xl inline ml-3">Toilet Paper Tracker</h1>
         </div>
 
-        <div className="mt-4 zip-code-input text-center">
-          {/* <label htmlFor="zip-code">Enter your zip code:</label>
+        <div className="text-md p-2 text-center">
+          Outwit the hoaders. Find available toilet paper near you.
+        </div>
+        <div className="text-sm italic mt-4 p-2 text-center">
+          Currently shows Target and Walmart stores in the DC-Maryland-Virginia
+          area
+        </div>
+
+        {/* <div className="mt-4 zip-code-input text-center">
+          <label htmlFor="zip-code">Enter your zip code:</label>
           <input
             disabled
             id="zip-code"
             className="mt-4 block mx-auto border-solid border-2 h-10 text-2xl text-center"
             style={{ maxWidth: 200 }}
             value="22180"
-          ></input> */}
-          <div className="text-sm italic mt-2">
-            <span className="font-semibold">BETA</span> - Currently supporting
-            Target and Walmart stores in the DC-Maryland-Virginia area
-          </div>
-        </div>
+          ></input>
+        </div> */}
 
         <GoogleMap
           id="map"
           mapContainerStyle={{
             height: "400px",
             maxWidth: "800px",
-            marginTop: "16px",
           }}
           zoom={zoom}
           center={center}
@@ -276,8 +231,11 @@ const IndexPage = () => {
                 </div>
               )}
               <div className="absolute top-0 right-0 p-4">
-                {AVAILABILITY_BADGE[tpLocation.available] ||
-                  tpLocation.available}
+                {AVAILABILITY_BADGE[tpLocation.available] || (
+                  <div className={`bg-gray-600 ${BADGE_CLASSES}`}>
+                    {tpLocation.available}
+                  </div>
+                )}
               </div>
             </div>
           ))}
