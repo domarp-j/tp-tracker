@@ -97,13 +97,9 @@ const isAvailable = location =>
 // Convert human-readable address to coordinates using Google Maps Geocode API
 const addressToCoords = async address => {
   try {
-    console.log("checking local storage");
-
     // Check local storage first for coordinates
     let coords = localStorage.getItem(`tp tracker ${address}`);
     if (coords) return JSON.parse(coords);
-
-    console.log("checking firestore");
 
     // Check firestore
     coords = await firestore
@@ -117,8 +113,6 @@ const addressToCoords = async address => {
       );
       return coords.data();
     }
-
-    console.log("calling gmaps");
 
     // Since address coordinates aren't stored, call Geocode API
     const req = await axios.get(
