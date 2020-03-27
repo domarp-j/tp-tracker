@@ -6,7 +6,6 @@
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
- * - Add "reset" button to reset center
  * - Add a logo
  */
 
@@ -33,6 +32,9 @@ const DEFAULT_CENTER_COORDS = {
   lat: 38.8895,
   lng: -77.0353,
 };
+
+// Default zoom level for map
+const DEFAULT_ZOOM = 10;
 
 // Apply weights to each availability type for sorting purposes
 // Lower sort weight -> higher priority
@@ -100,7 +102,7 @@ const removeDuplicateLocations = locations => {
 const IndexPage = () => {
   const [tpLocations, setTpLocations] = useState([]);
   const [markers, setMarkers] = useState([]);
-  const [zoom, setZoom] = useState(10);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS);
   const mapRef = useRef(null);
 
@@ -125,6 +127,11 @@ const IndexPage = () => {
     ).then(coords => setMarkers(coords));
 
     return locations;
+  };
+
+  const resetMap = () => {
+    setZoom(DEFAULT_ZOOM);
+    setCenter(DEFAULT_CENTER_COORDS);
   };
 
   const scrollToMap = () => {
@@ -169,7 +176,7 @@ const IndexPage = () => {
           <h1 className="text-3xl inline ml-3">Toilet Paper Tracker</h1>
         </div>
 
-        <div className="text-md p-2 text-center">
+        <div className="text-lg p-2 text-center">
           Outwit the hoaders. Find available toilet paper near you.
         </div>
         <div className="text-sm italic mt-4 p-2 text-center">
@@ -193,6 +200,7 @@ const IndexPage = () => {
           mapContainerStyle={{
             height: "400px",
             maxWidth: "800px",
+            position: "relative",
           }}
           zoom={zoom}
           center={center}
@@ -206,6 +214,17 @@ const IndexPage = () => {
               onClick={() => focusOnMarker(marker)}
             />
           ))}
+          <button
+            onClick={resetMap}
+            className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-500"
+            style={{
+              bottom: "4px",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            Reset to center
+          </button>
         </GoogleMap>
 
         <div className="border-2 border-gray-400">
