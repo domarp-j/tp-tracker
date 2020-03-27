@@ -6,7 +6,6 @@
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
- * - Make markers clickable
  * - Add "reset" button to show all markers again
  * - Optimize to reduce GMaps API calls
  * - Identify currently-focused address in list
@@ -29,13 +28,14 @@ const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE"
 const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE"
 const OUT_OF_STOCK = "OUT_OF_STOCK"
 
-// Washington Monument coordinates
+// Default coordinates (at the Washington Monument)
 const DEFAULT_CENTER_COORDS = {
   lat: 38.8895,
   lng: -77.0353,
 }
 
-// Apply weights to each availability type, for sorting purposes
+// Apply weights to each availability type for sorting purposes
+// Lower sort weight -> higher priority
 const SORT_WEIGHT = {
   [IN_STOCK]: 0,
   [LIMITED_STOCK_SEE_STORE]: 1,
@@ -71,6 +71,7 @@ const AVAILABILITY = {
 // Functions
 /*******************************************************/
 
+// Map through TP locations and make formatting changes
 const formatTpLocations = locations =>
   locations.map(loc => ({
     ...loc,
@@ -78,11 +79,13 @@ const formatTpLocations = locations =>
     available: loc.available.toUpperCase().replace(/\s/g, "_"),
   }))
 
+// Sort TP locations based on weights specified in SORT_WEIGHT mapping
 const sortTpLocations = locations =>
   locations.sort(
     (locA, locB) => SORT_WEIGHT[locA.available] - SORT_WEIGHT[locB.available]
   )
 
+// Sanitize data by removing any duplicate TP locations
 const removeDuplicateLocations = locations => {
   const addressCache = {}
   return locations.filter(loc => {
@@ -98,6 +101,7 @@ const removeDuplicateLocations = locations => {
 const isAvailable = location =>
   [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location)
 
+// Convert human-readable address to coordinates using Google Maps Geocode API
 const addressToCoords = async address => {
   try {
     const req = await axios.get(
@@ -128,29 +132,24 @@ const IndexPage = () => {
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS)
   const mapRef = useRef(null)
 
-  const showAddressOnMap = async address => {
+  const showAddressOnMap = address => {
     scrollToMap()
     addressToCoords(address).then(coords => {
-      setMarkers([coords])
       setCenter(coords)
       setZoom(15)
     })
   }
 
+  const focusOnMarker = coords => {
+    setCenter(coords)
+    setZoom(15)
+  }
+
   const markTpLocations = locations => {
-    let addresses = []
-    // let markerCount = 0
-
-    locations.forEach(loc => {
-      // if (markerCount === MAX_MARKER_COUNT) return
-      if (isAvailable(loc.available)) {
-        // markerCount++
-        addresses.push(loc.address)
-      }
-    })
-
     Promise.all(
-      addresses.map(address => addressToCoords(address))
+      locations
+        .filter(loc => isAvailable(loc.available))
+        .map(loc => addressToCoords(loc.address))
     ).then(coords => setMarkers(coords))
 
     return locations
@@ -159,6 +158,15 @@ const IndexPage = () => {
   const scrollToMap = () => {
     if (!mapRef) return
     window.scrollTo(0, mapRef.current.offsetTop)
+  }
+
+  const handleZoomChanged = () => {
+    if (!mapRef) return
+    if (!mapRef.current) return
+    const mapZoom = mapRef.current.state.map.zoom
+    if (mapZoom !== zoom) {
+      setZoom(mapZoom)
+    }
   }
 
   useEffect(() => {
@@ -212,9 +220,14 @@ const IndexPage = () => {
           zoom={zoom}
           center={center}
           ref={mapRef}
+          onZoomChanged={handleZoomChanged}
         >
           {markers.map((marker, i) => (
-            <Marker key={i} position={marker} />
+            <Marker
+              key={i}
+              position={marker}
+              onClick={() => focusOnMarker(marker)}
+            />
           ))}
         </GoogleMap>
 
