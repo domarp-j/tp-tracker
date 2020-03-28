@@ -308,6 +308,7 @@ const IndexPage = () => {
                   }`}
                   onClick={() => {
                     setProduct(TP);
+                    resetMap();
                     markLocations(tpLocations);
                   }}
                 >
@@ -321,6 +322,7 @@ const IndexPage = () => {
                   }`}
                   onClick={() => {
                     setProduct(HS);
+                    resetMap();
                     markLocations(hsLocations);
                   }}
                 >
