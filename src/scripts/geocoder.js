@@ -39,7 +39,9 @@ const main = async () => {
     });
 
     if (geocodeCandidates.length > 0) {
-      console.log("New addresses found that require geocoding...  ");
+      console.log("New addresses found that require geocoding...");
+    } else {
+      console.log("No new addresses found.");
     }
 
     // Create a promise for each Geocoding API request
@@ -48,6 +50,8 @@ const main = async () => {
       (address, index) =>
         new Promise(resolve => {
           setTimeout(async () => {
+            console.log(`Geocoding address ${address}`);
+
             const res = await axios.get(
               "https://maps.googleapis.com/maps/api/geocode/json",
               {

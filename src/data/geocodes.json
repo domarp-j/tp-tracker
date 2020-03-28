@@ -290,5 +290,137 @@
   "6600 Springfield Mall Springfield VA 22150-1712": {
     "lat": 38.7758828,
     "lng": -77.1741619
+  },
+  "99 H Street Nw Washington DC 20001": {
+    "lat": 38.900475,
+    "lng": -77.011954
+  },
+  "310 Riggs Road Ne Washington DC 20011": {
+    "lat": 38.957531,
+    "lng": -77.002461
+  },
+  "5929 Georgia Ave Nw Washington DC 20011": {
+    "lat": 38.962066,
+    "lng": -77.027284
+  },
+  "12000 Cherry Hill Rd Silver Spring MD 20904-1985": {
+    "lat": 39.0515481,
+    "lng": -76.9567446
+  },
+  "10500 Campus Way S Upper Marlboro MD 20774-1309": {
+    "lat": 38.8962324,
+    "lng": -76.8272268
+  },
+  "5700 Bou Ave Rockville MD 20852-1663": {
+    "lat": 39.0560695,
+    "lng": -77.11489739999999
+  },
+  "10401 Martin Luther King Jr Hwy Bowie MD 20720-4201": {
+    "lat": 38.9534003,
+    "lng": -76.825064
+  },
+  "10301 New Guinea Rd Fairfax VA 22032-3268": {
+    "lat": 38.7983683,
+    "lng": -77.3010302
+  },
+  "25 Grand Corner Ave Gaithersburg MD 20878-7305": {
+    "lat": 39.1189334,
+    "lng": -77.202372
+  },
+  "4600 Mitchellville Rd Bowie MD 20716-3110": {
+    "lat": 38.9525732,
+    "lng": -76.7230101
+  },
+  "12197 Sunset Hills Rd Reston VA 20190-3208": {
+    "lat": 38.9554321,
+    "lng": -77.3703055
+  },
+  "15922 Crain Hwy SE Brandywine MD 20613-8000": {
+    "lat": 38.6725267,
+    "lng": -76.87263659999999
+  },
+  "3343 Corridor Marketplace Laurel MD 20724-2378": {
+    "lat": 39.0967801,
+    "lng": -76.810284
+  },
+  "13047 Fair Lakes Shopping Ctr Fairfax VA 22033-5179": {
+    "lat": 38.8551875,
+    "lng": -77.3928684
+  },
+  "3300 Western Pkwy Waldorf MD 20603-4582": {
+    "lat": 38.6208216,
+    "lng": -76.9223519
+  },
+  "46201 Potomac Run Plz Sterling VA 20164-6609": {
+    "lat": 39.0258358,
+    "lng": -77.4008022
+  },
+  "2384 BRANDERMILL BLVD Gambrills MD 21054": {
+    "lat": 39.034341,
+    "lng": -76.6838348
+  },
+  "2460 Prince William Pkwy Woodbridge VA 22192-4148": {
+    "lat": 38.6550083,
+    "lng": -77.289181
+  },
+  "14391 Chantilly Crossing Ln Chantilly VA 20151-2118": {
+    "lat": 38.8948743,
+    "lng": -77.44527719999999
+  },
+  "45130 Columbia Pl Sterling VA 20166-2500": {
+    "lat": 39.0094559,
+    "lng": -77.43882219999999
+  },
+  "20908 Frederick Rd Germantown MD 20876-4134": {
+    "lat": 39.1983778,
+    "lng": -77.2489569
+  },
+  "6111 Dobbin Rd Columbia MD 21045-5802": {
+    "lat": 39.1974766,
+    "lng": -76.8131681
+  },
+  "60 Shining Willow Way La Plata MD 20646-4224": {
+    "lat": 38.5410901,
+    "lng": -76.98176769999999
+  },
+  "4310 Fortuna Center Plz Dumfries VA 22025-1538": {
+    "lat": 38.5978337,
+    "lng": -77.3326219
+  },
+  "4390 Montgomery Rd Ellicott City MD 21043-6068": {
+    "lat": 39.250531,
+    "lng": -76.81734999999999
+  },
+  "7951 Nolpark Ct Glen Burnie MD 21061-5205": {
+    "lat": 39.1326736,
+    "lng": -76.6338706
+  },
+  "1911 Towne Centre Blvd Annapolis MD 21401-3020": {
+    "lat": 38.9804358,
+    "lng": -76.5411091
+  },
+  "9900 Sowder Village Sq Manassas VA 20109-5464": {
+    "lat": 38.7396239,
+    "lng": -77.5331132
+  },
+  "1200 Edwards Ferry Rd Leesburg VA 20176-3318": {
+    "lat": 39.1161492,
+    "lng": -77.5356087
+  },
+  "6717 Ritchie Hwy Glen Burnie MD 21061-2318": {
+    "lat": 39.1902658,
+    "lng": -76.6100414
+  },
+  "13301 Gateway Center Dr Gainesville VA 20155-2984": {
+    "lat": 38.7941452,
+    "lng": -77.6068581
+  },
+  "3201 Tioga Pkwy Baltimore MD 21215-7987": {
+    "lat": 39.3171707,
+    "lng": -76.65644739999999
+  },
+  "1090 Stafford Market Pl Stafford VA 22556-4523": {
+    "lat": 38.47164230000001,
+    "lng": -77.4079768
   }
 }

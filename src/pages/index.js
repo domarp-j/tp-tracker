@@ -262,6 +262,19 @@ const IndexPage = () => {
                         >
                           Show on map
                         </button>
+                        {tpLocation.url && (
+                          <>
+                            ｜
+                            <a
+                              className="text-blue-600 underline"
+                              href={tpLocation.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View product
+                            </a>
+                          </>
+                        )}
                       </div>
                     )}
                     <div className="absolute top-0 right-0 p-4">
