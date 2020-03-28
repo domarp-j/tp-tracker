@@ -1,12 +1,8 @@
 /**
  * TODO:
- * - Add loading states
- *   - Loading page
- *   - Showing store on map
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
- * - Add a logo
  * - Netlify feedback
  * - Remove use of GMaps & FB for security purposes
  *   - Generate geocodes at build time
