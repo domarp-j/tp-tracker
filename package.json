@@ -1,7 +1,7 @@
 {
   "name": "tp-tracker",
   "private": true,
-  "description": "Track availability of toilet paper at Walmart and Target stores in the DC-Maryland-Virginia area",
+  "description": "Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area",
   "version": "0.1.0",
   "author": "Sepehr Sobhani & Pramod Jacob",
   "dependencies": {
@@ -21,6 +21,7 @@
     "ramda": "^0.27.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-fade-in": "^0.1.8",
     "react-helmet": "^5.2.1"
   },
   "devDependencies": {

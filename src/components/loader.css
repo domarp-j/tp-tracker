@@ -1,0 +1,13 @@
+.fade-in-out {
+  animation: fader 900ms infinite alternate-reverse;
+}
+
+@keyframes fader {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}

@@ -7,16 +7,25 @@
  *   - Maps unavailability
  *   - Failed to fetch stores
  * - Add a logo
+ * - Netlify feedback
+ * - Remove use of GMaps & FB for security purposes
+ *   - Generate geocodes at build time
  */
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { compose } from "ramda";
+import FadeIn from "react-fade-in";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 import Layout from "../components/layout";
+import Loader from "../components/loader";
 import SEO from "../components/seo";
 import addressToCoords from "../utils/geocoding";
+
+import tpRoll from "../images/tp-roll.png";
+
+import "./index.css";
 
 /*****************************************************************/
 // Data Structures
@@ -70,12 +79,18 @@ const AVAILABILITY_BADGE = {
 const isAvailable = location =>
   [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location);
 
+const toScreamingSnake = str => str.toUpperCase().replace(/\s/g, "_");
+
 // Map through TP locations and make some formatting changes
+// Also convert NOT_SOLD_IN_STORE availability to OUT_OF_STOCK
 const formatTpLocations = locations =>
   locations.map(loc => ({
     ...loc,
     store: `${loc.store[0].toUpperCase()}${loc.store.slice(1)}`,
-    available: loc.available.toUpperCase().replace(/\s/g, "_"),
+    available:
+      loc.available === NOT_SOLD_IN_STORE
+        ? toScreamingSnake(OUT_OF_STOCK)
+        : toScreamingSnake(loc.available),
   }));
 
 // Sort TP locations based on weights specified in SORT_WEIGHT mapping
@@ -107,6 +122,7 @@ const IndexPage = () => {
   const [markers, setMarkers] = useState([]);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS);
+  const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
 
   const showAddressOnMap = address => {
@@ -167,6 +183,7 @@ const IndexPage = () => {
   useEffect(() => {
     axios.get(process.env.GATSBY_API_URL).then(res => {
       compose(
+        () => setLoading(false),
         setTpLocations,
         markTpLocations,
         filterTpLocations,
@@ -184,94 +201,94 @@ const IndexPage = () => {
       >
         <SEO title="Home" />
 
-        <div className="home-header mt-6 mx-auto flex items-center justify-center">
-          {/* <div className="image-placeholder h-20 w-20 border-solid border-2"></div> */}
-          <h1 className="text-3xl inline ml-3">Toilet Paper Tracker</h1>
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <FadeIn>
+            <div>
+              <div className="home-header mt-6 mx-auto flex items-center justify-center">
+                <img src={tpRoll} alt="Toilet paper roll" className="w-16" />
+                <h1 className="text-3xl inline ml-3">DC TP</h1>
+              </div>
 
-        <div className="text-lg p-2 text-center">
-          Outwit the hoaders. Find available toilet paper near you.
-        </div>
-        <div className="text-sm italic mt-4 p-2 text-center">
-          Currently supports showing Target, Walmart, and Walgreens stores in
-          the DC-Maryland-Virginia area
-        </div>
+              <h2 className="text-lg p-2 text-center">
+                Outwit the hoaders. Find available toilet paper in Washington,
+                DC.
+              </h2>
+              <div className="text-sm italic mt-4 p-2 text-center">
+                Currently supports showing Target, Walmart, and Walgreens stores
+                in the DC-Maryland-Virginia area
+              </div>
 
-        {/* <div className="mt-4 zip-code-input text-center">
-          <label htmlFor="zip-code">Enter your zip code:</label>
-          <input
-            disabled
-            id="zip-code"
-            className="mt-4 block mx-auto border-solid border-2 h-10 text-2xl text-center"
-            style={{ maxWidth: 200 }}
-            value="22180"
-          ></input>
-        </div> */}
+              <GoogleMap
+                id="map"
+                mapContainerStyle={{
+                  height: "400px",
+                  maxWidth: "800px",
+                  position: "relative",
+                }}
+                zoom={zoom}
+                center={center}
+                ref={mapRef}
+                onZoomChanged={handleZoomChanged}
+              >
+                {markers.map((marker, i) => (
+                  <Marker
+                    key={i}
+                    position={marker}
+                    onClick={() => focusOnMarker(marker)}
+                  />
+                ))}
+                <button
+                  onClick={resetMap}
+                  className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-400"
+                  style={{
+                    bottom: "4px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                  }}
+                >
+                  Reset to center
+                </button>
+              </GoogleMap>
 
-        <GoogleMap
-          id="map"
-          mapContainerStyle={{
-            height: "400px",
-            maxWidth: "800px",
-            position: "relative",
-          }}
-          zoom={zoom}
-          center={center}
-          ref={mapRef}
-          onZoomChanged={handleZoomChanged}
-        >
-          {markers.map((marker, i) => (
-            <Marker
-              key={i}
-              position={marker}
-              onClick={() => focusOnMarker(marker)}
-            />
-          ))}
-          <button
-            onClick={resetMap}
-            className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-400"
-            style={{
-              bottom: "4px",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-          >
-            Reset to center
-          </button>
-        </GoogleMap>
-
-        <div className="border-2 border-gray-400">
-          {tpLocations.map(tpLocation => (
-            <div
-              key={`${tpLocation.store} ${tpLocation.id} ${tpLocation.address}`}
-              className={`border-b-2 border-gray-400 p-4 relative ${
-                !isAvailable(tpLocation.available) ? "opacity-50" : ""
-              }`}
-            >
-              <div className="text-xl">{tpLocation.store}</div>
-              <div className="text-gray-700 mt-2">{tpLocation.address}</div>
-              {isAvailable(tpLocation.available) && (
-                <div className="mt-2">
-                  <button
-                    className="text-blue-600 underline"
-                    onClick={() => {
-                      showAddressOnMap(tpLocation.address);
-                    }}
+              <div className="border-2 border-gray-400">
+                {tpLocations.map(tpLocation => (
+                  <div
+                    key={`${tpLocation.store} ${tpLocation.id} ${tpLocation.address}`}
+                    className={`border-b-2 border-gray-400 p-4 relative ${
+                      !isAvailable(tpLocation.available) ? "opacity-50" : ""
+                    }`}
                   >
-                    Show on map
-                  </button>
-                </div>
-              )}
-              <div className="absolute top-0 right-0 p-4">
-                {AVAILABILITY_BADGE[tpLocation.available] || (
-                  <div className={`bg-gray-600 ${BADGE_CLASSES}`}>
-                    {tpLocation.available}
+                    <div className="text-xl">{tpLocation.store}</div>
+                    <div className="text-gray-700 mt-2">
+                      {tpLocation.address}
+                    </div>
+                    {isAvailable(tpLocation.available) && (
+                      <div className="mt-2">
+                        <button
+                          className="text-blue-600 underline"
+                          onClick={() => {
+                            showAddressOnMap(tpLocation.address);
+                          }}
+                        >
+                          Show on map
+                        </button>
+                      </div>
+                    )}
+                    <div className="absolute top-0 right-0 p-4">
+                      {AVAILABILITY_BADGE[tpLocation.available] || (
+                        <div className={`bg-gray-600 ${BADGE_CLASSES}`}>
+                          {tpLocation.available}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          </FadeIn>
+        )}
       </LoadScript>
     </Layout>
   );
