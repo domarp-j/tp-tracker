@@ -5,7 +5,6 @@
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
  * - Netlify feedback
- * - Show address on markers on click/focus
  * - Filter by state?
  */
 
