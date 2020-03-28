@@ -13,7 +13,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { compose } from "ramda";
 import FadeIn from "react-fade-in";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, InfoBox, LoadScript, Marker } from "@react-google-maps/api";
 
 import Footer from "../components/footer";
 import Layout from "../components/layout";
@@ -21,6 +21,8 @@ import Loader from "../components/loader";
 import SEO from "../components/seo";
 import geocodeData from "../data/geocodes.json";
 import tpRoll from "../images/tp-roll.png";
+
+import "./index.css";
 
 /*****************************************************************/
 // Data Structures
@@ -157,6 +159,9 @@ const IndexPage = () => {
   // Loading state
   const [loading, setLoading] = useState(true);
 
+  // Display info-box for a specific marker
+  const [infobox, setInfobox] = useState();
+
   // Ref for GoogleMap component
   const mapRef = useRef(null);
 
@@ -178,13 +183,18 @@ const IndexPage = () => {
       .map(loc => {
         if (loc.lat && loc.lng) {
           return {
+            address: loc.address,
+            store: loc.store,
             lat: parseFloat(loc.lat),
             lng: parseFloat(loc.lng),
           };
         }
-        return geocodeData[loc.address];
-      })
-      .filter(coords => coords);
+        return {
+          address: loc.address,
+          store: loc.store,
+          ...geocodeData[loc.address],
+        };
+      });
 
     setMarkers(markers);
   };
@@ -192,6 +202,7 @@ const IndexPage = () => {
   const resetMap = () => {
     setZoom(DEFAULT_ZOOM);
     setCenter(DEFAULT_CENTER_COORDS);
+    setInfobox(null);
   };
 
   const scrollToMap = () => {
@@ -215,10 +226,6 @@ const IndexPage = () => {
         filterInvalidLocations,
         formatLocations
       )(res.data);
-
-      locations.forEach(location => {
-        console.dir(location.available);
-      });
 
       compose(
         () => setLoading(false),
@@ -280,11 +287,25 @@ const IndexPage = () => {
                 onZoomChanged={handleZoomChanged}
               >
                 {markers.map((marker, i) => (
-                  <Marker
-                    key={i}
-                    position={marker}
-                    onClick={() => focusOnMarker(marker)}
-                  />
+                  <div key={i}>
+                    <Marker
+                      position={marker}
+                      onClick={() => {
+                        focusOnMarker(marker);
+                        setInfobox(marker);
+                      }}
+                    />
+                    {infobox && infobox.address === marker.address && (
+                      <InfoBox position={marker}>
+                        <div className="bg-white p-2 rounded max-w-xs border-2 border-gray-300">
+                          <div className="text-lg">{marker.store}</div>
+                          <div className="mt-2 text-sm text-gray-700">
+                            {marker.address}
+                          </div>
+                        </div>
+                      </InfoBox>
+                    )}
+                  </div>
                 ))}
                 <button
                   onClick={resetMap}
@@ -346,6 +367,7 @@ const IndexPage = () => {
                           className="text-blue-600 underline"
                           onClick={() => {
                             showAddressOnMap(loc.address);
+                            setInfobox(loc);
                           }}
                         >
                           Show on map
@@ -375,7 +397,6 @@ const IndexPage = () => {
                   </div>
                 ))}
               </div>
-
               <Footer />
             </div>
           </FadeIn>
