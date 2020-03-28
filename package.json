@@ -7,7 +7,6 @@
   "dependencies": {
     "@react-google-maps/api": "^1.8.6",
     "axios": "^0.19.2",
-    "firebase": "^7.13.0",
     "gatsby": "^2.19.45",
     "gatsby-image": "^2.2.44",
     "gatsby-plugin-manifest": "^2.2.48",

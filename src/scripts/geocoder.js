@@ -24,14 +24,18 @@ const main = async () => {
       // Skip if geocode is already logged
       if (geocodes[location.address]) return;
 
-      // Save unlogged geocode
-      geocodes[location.address] = location;
+      // If latitute & longitude are known from API, log them
+      if (location.lat && location.lng) {
+        geocodes[location.address] = {
+          lat: parseFloat(location.lat),
+          lng: parseFloat(location.lng),
+        };
+      }
 
-      // Stop if latitute & longitude are known
-      if (location.lat && location.lng) return;
-
-      // Mark address as a Geocoding API candidate
-      geocodeCandidates.push(location.address);
+      // Otherwise, mark address as a Geocoding API candidate
+      else {
+        geocodeCandidates.push(location.address);
+      }
     });
 
     if (geocodeCandidates.length > 0) {
@@ -58,11 +62,7 @@ const main = async () => {
             const coords = res.data.results[0].geometry.location;
 
             // Update geocodes object with coordinates
-            geocodes[address] = {
-              ...geocodes[address],
-              ...coords,
-            };
-
+            geocodes[address] = coords;
             resolve();
           }, 200 * index);
         })

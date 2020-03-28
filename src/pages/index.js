@@ -3,9 +3,8 @@
  * - Error handling
  *   - Maps unavailability
  *   - Failed to fetch stores
+ *   - Geocode address isn't stored
  * - Netlify feedback
- * - Remove use of GMaps & FB for security purposes
- *   - Generate geocodes at build time
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -18,11 +17,8 @@ import Footer from "../components/footer";
 import Layout from "../components/layout";
 import Loader from "../components/loader";
 import SEO from "../components/seo";
-import addressToCoords from "../utils/geocoding";
-
+import geocodeData from "../data/geocodes.json";
 import tpRoll from "../images/tp-roll.png";
-
-import "./index.css";
 
 /*****************************************************************/
 // Data Structures
@@ -123,11 +119,10 @@ const IndexPage = () => {
   const mapRef = useRef(null);
 
   const showAddressOnMap = address => {
+    if (!geocodeData[address]) return;
     scrollToMap();
-    addressToCoords(address).then(coords => {
-      setCenter(coords);
-      setZoom(15);
-    });
+    setCenter(geocodeData[address]);
+    setZoom(15);
   };
 
   const focusOnMarker = coords => {
@@ -136,21 +131,20 @@ const IndexPage = () => {
   };
 
   const markTpLocations = locations => {
-    Promise.all(
-      locations
-        .filter(loc => isAvailable(loc.available))
-        .map(loc => {
-          // console.log("~~~~~~~~~~~~~~~~~~~");
-          if (loc.lat && loc.lng) {
-            // console.log("GC0-api");
-            return {
-              lat: parseFloat(loc.lat),
-              lng: parseFloat(loc.lng),
-            };
-          }
-          return addressToCoords(loc.address);
-        })
-    ).then(coords => setMarkers(coords));
+    const markers = locations
+      .filter(loc => isAvailable(loc.available))
+      .map(loc => {
+        if (loc.lat && loc.lng) {
+          return {
+            lat: parseFloat(loc.lat),
+            lng: parseFloat(loc.lng),
+          };
+        }
+        return geocodeData[loc.address];
+      })
+      .filter(coords => coords);
+
+    setMarkers(markers);
 
     return locations;
   };
@@ -162,19 +156,15 @@ const IndexPage = () => {
 
   const scrollToMap = () => {
     if (!mapRef) return;
-
+    if (!mapRef.current) return;
     window.scrollTo(0, mapRef.current.offsetTop);
   };
 
   const handleZoomChanged = () => {
     if (!mapRef) return;
     if (!mapRef.current) return;
-
     const mapZoom = mapRef.current.state.map.zoom;
-
-    if (mapZoom !== zoom) {
-      setZoom(mapZoom);
-    }
+    if (mapZoom !== zoom) setZoom(mapZoom);
   };
 
   useEffect(() => {
@@ -194,7 +184,7 @@ const IndexPage = () => {
     <Layout>
       <LoadScript
         id="script-loader"
-        loadingElement={Loader}
+        loadingElement={<Loader />}
         googleMapsApiKey={process.env.GATSBY_GMAPS_KEY}
       >
         <SEO title="Home" />
