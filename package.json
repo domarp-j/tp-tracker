@@ -28,7 +28,9 @@
     "tailwindcss": "^1.2.0"
   },
   "keywords": [
-    "gatsby"
+    "toilet-paper",
+    "gatsby",
+    "react"
   ],
   "license": "MIT",
   "scripts": {
@@ -43,9 +45,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
-  },
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
+    "url": "https://github.com/domarp-j/tp-tracker"
   }
 }

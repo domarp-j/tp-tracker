@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `DC TP`,
     description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
-    author: `@sepehr500 and @domarp-j`,
+    author: `Sepehr Sobhani and Pramod Jacob`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -11,11 +11,11 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `gatsby-starter-default`,
-        short_name: `starter`,
+        name: `DC TP Tracker`,
+        short_name: `DC TP`,
+        description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
         start_url: `/`,
-        background_color: `#663399`,
-        theme_color: `#663399`,
+        background_color: `#fff`,
         display: `minimal-ui`,
         icon: "src/images/tp-roll.png",
       },
