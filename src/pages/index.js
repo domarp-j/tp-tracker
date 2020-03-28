@@ -7,7 +7,6 @@
  * - Netlify feedback
  * - Show address on markers on click/focus
  * - Filter by state?
- * - Filter by product once hand sanitizers are displayed
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -27,11 +26,18 @@ import tpRoll from "../images/tp-roll.png";
 // Data Structures
 /*****************************************************************/
 
+// Availability types
 const IN_STOCK = "IN_STOCK";
+const LIMITED_STOCK = "LIMITED_STOCK";
 const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE";
 const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE";
 const OUT_OF_STOCK = "OUT_OF_STOCK";
 const UNKNOWN = "UNKNOWN";
+const DISCONTINUED = "DISCONTINUED";
+
+// Product types
+const TP = "tp"; // Toilet paper
+const HS = "hs"; // Hand sanitizer
 
 // Default center coordinates (at the Washington Monument)
 const DEFAULT_CENTER_COORDS = {
@@ -46,16 +52,21 @@ const DEFAULT_ZOOM = 10;
 // Lower sort weight -> higher priority
 const SORT_WEIGHT = {
   [IN_STOCK]: 1,
+  [LIMITED_STOCK]: 2,
   [LIMITED_STOCK_SEE_STORE]: 2,
   [NOT_SOLD_IN_STORE]: 3,
   [OUT_OF_STOCK]: 4,
   [UNKNOWN]: 5,
+  [DISCONTINUED]: 5,
 };
 
 const BADGE_CLASSES = "text-white text-sm font-semibold py-1 px-2 rounded";
 
 const AVAILABILITY_BADGE = {
   [IN_STOCK]: <div className={`bg-green-500 ${BADGE_CLASSES}`}>In Stock</div>,
+  [LIMITED_STOCK]: (
+    <div className={`bg-yellow-600 ${BADGE_CLASSES}`}>Limited Stock</div>
+  ),
   [LIMITED_STOCK_SEE_STORE]: (
     <div className={`bg-yellow-600 ${BADGE_CLASSES}`}>Limited Stock</div>
   ),
@@ -65,21 +76,23 @@ const AVAILABILITY_BADGE = {
   [OUT_OF_STOCK]: (
     <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
   ),
-  [UNKNOWN]: <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Unknown</div>,
 };
 
 /*****************************************************************/
 // Functions
 /*****************************************************************/
 
-const isAvailable = location =>
-  [IN_STOCK, LIMITED_STOCK_SEE_STORE].includes(location);
+const isAvailable = available =>
+  [IN_STOCK, LIMITED_STOCK, LIMITED_STOCK_SEE_STORE].includes(available);
+
+const isInvalidAvailability = available =>
+  [UNKNOWN, DISCONTINUED].includes(available);
 
 const toScreamingSnake = str => str.toUpperCase().replace(/\s/g, "_");
 
-// Map through TP locations and make some formatting changes
+// Map through locations and make some formatting changes
 // Also convert NOT_SOLD_IN_STORE availability to OUT_OF_STOCK
-const formatTpLocations = locations =>
+const formatLocations = locations =>
   locations.map(loc => ({
     ...loc,
     store: `${loc.store[0].toUpperCase()}${loc.store.slice(1)}`,
@@ -87,18 +100,27 @@ const formatTpLocations = locations =>
       loc.available === NOT_SOLD_IN_STORE
         ? toScreamingSnake(OUT_OF_STOCK)
         : toScreamingSnake(loc.available),
+    type: loc.type || TP,
   }));
 
-// Sort TP locations based on weights specified in SORT_WEIGHT mapping
-const sortTpLocations = locations =>
+// Filter out any locations that have "bad" availability values, e.g.
+// UNKNOWN or DISCONTINUED
+const filterInvalidLocations = locations =>
+  locations.filter(loc => !isInvalidAvailability(loc.available));
+
+// Sort locations based on weights specified in SORT_WEIGHT mapping
+const sortLocations = locations =>
   locations.sort(
     (locA, locB) => SORT_WEIGHT[locA.available] - SORT_WEIGHT[locB.available]
   );
 
-// Filter out duplicate locations and locations with unknown TP availability
-const filterTpLocations = locations => {
-  const addressCache = {};
+// Filter locations based on a given product
+const filterLocationsByType = type => locations =>
+  locations.filter(loc => loc.type === type);
 
+// Filter out duplicate addresses
+const filterDuplicateLocations = locations => {
+  const addressCache = {};
   return locations.filter(loc => {
     if (addressCache[loc.address]) {
       return false;
@@ -114,11 +136,28 @@ const filterTpLocations = locations => {
 /*****************************************************************/
 
 const IndexPage = () => {
+  // Toilet paper locations
   const [tpLocations, setTpLocations] = useState([]);
+
+  // Hand sanitizer locations
+  const [hsLocations, setHsLocations] = useState([]);
+
+  // Currently selected product
+  const [product, setProduct] = useState(TP);
+
+  // Coordinates to place map markers
   const [markers, setMarkers] = useState([]);
+
+  // Map zoom level
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+
+  // Map center coordinates
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS);
+
+  // Loading state
   const [loading, setLoading] = useState(true);
+
+  // Ref for GoogleMap component
   const mapRef = useRef(null);
 
   const showAddressOnMap = address => {
@@ -133,7 +172,7 @@ const IndexPage = () => {
     setZoom(15);
   };
 
-  const markTpLocations = locations => {
+  const markLocations = locations => {
     const markers = locations
       .filter(loc => isAvailable(loc.available))
       .map(loc => {
@@ -148,8 +187,6 @@ const IndexPage = () => {
       .filter(coords => coords);
 
     setMarkers(markers);
-
-    return locations;
   };
 
   const resetMap = () => {
@@ -172,14 +209,33 @@ const IndexPage = () => {
 
   useEffect(() => {
     axios.get(process.env.GATSBY_API_URL).then(res => {
+      if (!res.data) return; // TODO: Error handling
+      const locations = compose(
+        sortLocations,
+        filterInvalidLocations,
+        formatLocations
+      )(res.data);
+
+      locations.forEach(location => {
+        console.dir(location.available);
+      });
+
       compose(
         () => setLoading(false),
-        setTpLocations,
-        markTpLocations,
-        filterTpLocations,
-        sortTpLocations,
-        formatTpLocations
-      )(res.data);
+        markLocations,
+        locations => {
+          setTpLocations(locations);
+          return locations;
+        },
+        filterDuplicateLocations,
+        filterLocationsByType(TP)
+      )(locations);
+
+      compose(
+        setHsLocations,
+        filterDuplicateLocations,
+        filterLocationsByType(HS)
+      )(locations);
     });
   }, []);
 
@@ -203,8 +259,8 @@ const IndexPage = () => {
               </div>
 
               <h2 className="text-lg p-2 text-center">
-                Outwit the hoarders. Find available toilet paper in Washington,
-                DC.
+                Outwit the hoarders. Find available toilet paper (and hand
+                sanitizer) in Washington, DC.
               </h2>
               <div className="text-sm italic mt-4 p-2 text-center">
                 Currently supports showing Target, Walmart, and Walgreens stores
@@ -243,34 +299,61 @@ const IndexPage = () => {
                 </button>
               </GoogleMap>
 
+              <div>
+                <button
+                  className={`border-t-2 border-l-2 border-gray-400 w-1/2 py-2 ${
+                    product === TP
+                      ? "bg-green-600 text-white font-bold"
+                      : "bg-white hover:bg-gray-300 focus:bg-gray-300"
+                  }`}
+                  onClick={() => {
+                    setProduct(TP);
+                    markLocations(tpLocations);
+                  }}
+                >
+                  Toilet Paper
+                </button>
+                <button
+                  className={`border-t-2 border-l-2 border-r-2 border-gray-400 w-1/2 py-2 ${
+                    product === HS
+                      ? "bg-green-600 text-white font-bold"
+                      : "bg-white hover:bg-gray-300 focus:bg-gray-300"
+                  }`}
+                  onClick={() => {
+                    setProduct(HS);
+                    markLocations(hsLocations);
+                  }}
+                >
+                  Hand Sanitizer
+                </button>
+              </div>
+
               <div className="border-2 border-gray-400">
-                {tpLocations.map(tpLocation => (
+                {(product === TP ? tpLocations : hsLocations).map(loc => (
                   <div
-                    key={`${tpLocation.store} ${tpLocation.id} ${tpLocation.address}`}
+                    key={`${loc.store} ${loc.id} ${loc.address}`}
                     className={`border-b-2 border-gray-400 p-4 relative ${
-                      !isAvailable(tpLocation.available) ? "opacity-50" : ""
+                      !isAvailable(loc.available) ? "opacity-50" : ""
                     }`}
                   >
-                    <div className="text-xl">{tpLocation.store}</div>
-                    <div className="text-gray-700 mt-2">
-                      {tpLocation.address}
-                    </div>
-                    {isAvailable(tpLocation.available) && (
+                    <div className="text-xl">{loc.store}</div>
+                    <div className="text-gray-700 mt-2">{loc.address}</div>
+                    {isAvailable(loc.available) && (
                       <div className="mt-2">
                         <button
                           className="text-blue-600 underline"
                           onClick={() => {
-                            showAddressOnMap(tpLocation.address);
+                            showAddressOnMap(loc.address);
                           }}
                         >
                           Show on map
                         </button>
-                        {tpLocation.url && (
+                        {loc.url && (
                           <>
                             ｜
                             <a
                               className="text-blue-600 underline"
-                              href={tpLocation.url}
+                              href={loc.url}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -281,9 +364,9 @@ const IndexPage = () => {
                       </div>
                     )}
                     <div className="absolute top-0 right-0 p-4">
-                      {AVAILABILITY_BADGE[tpLocation.available] || (
+                      {AVAILABILITY_BADGE[loc.available] || (
                         <div className={`bg-gray-600 ${BADGE_CLASSES}`}>
-                          {tpLocation.available}
+                          {loc.available}
                         </div>
                       )}
                     </div>

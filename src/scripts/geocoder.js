@@ -9,20 +9,36 @@ dotenv.config({ path: ".env.development" });
 
 const main = async () => {
   try {
-    console.log("Retrieving existing geocodes...");
+    // Track whether geocodes JSON needs to be overwritten
+    let newGeocodesRequired = false;
+
+    console.log("Retrieving existing geocodes from JSON file...");
     let geocodes = require("../data/geocodes.json");
 
-    console.log("Fetching TP location data...");
+    console.log("Fetching data from API...");
     const res = await axios.get(process.env.GATSBY_API_URL);
-    if (!res.data) return;
+    if (!res.data) {
+      console.log("API did not return data. Aborting...");
+      process.exitCode(1);
+    }
+
+    console.log("Filtering out duplicate locations...");
+    const addressCache = {};
+    const locations = res.data.filter(location => {
+      if (addressCache[location.address]) return false;
+      addressCache[location.address] = true;
+      return true;
+    });
 
     // Track addresses that need to hit Geocoding API
     let geocodeCandidates = [];
 
-    console.log("Checking new TP location data against existing data...");
-    res.data.forEach(location => {
+    console.log("Checking new location data against existing geocode data...");
+    locations.forEach(location => {
       // Skip if geocode is already logged
       if (geocodes[location.address]) return;
+
+      newGeocodesRequired = true;
 
       // If latitute & longitude are known from API, log them
       if (location.lat && location.lng) {
@@ -73,6 +89,7 @@ const main = async () => {
     );
 
     Promise.all(geocodeReqs).then(() => {
+      if (!newGeocodesRequired) return;
       console.log("Writing new geocode data file...");
       writeFile("src/data/geocodes.json", JSON.stringify(geocodes));
     });
