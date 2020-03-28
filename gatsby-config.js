@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `DC TP`,
+    title: `Get Me TP`,
     description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
     author: `Sepehr Sobhani and Pramod Jacob`,
   },
@@ -11,8 +11,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `DC TP Tracker`,
-        short_name: `DC TP`,
+        name: `Get Me TP`,
+        short_name: `Get Me TP`,
         description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
         start_url: `/`,
         background_color: `#fff`,

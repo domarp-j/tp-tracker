@@ -201,7 +201,7 @@ const IndexPage = () => {
             <div>
               <div className="home-header mt-6 mx-auto flex items-center justify-center">
                 <img src={tpRoll} alt="Toilet paper roll" className="w-16" />
-                <h1 className="text-3xl inline ml-3">DC TP</h1>
+                <h1 className="text-3xl inline ml-3">Get Me TP</h1>
               </div>
 
               <h2 className="text-lg p-2 text-center">
