@@ -295,7 +295,10 @@ const IndexPage = () => {
                       }}
                     />
                     {infobox && infobox.address === marker.address && (
-                      <InfoBox position={marker}>
+                      <InfoBox
+                        position={marker}
+                        onCloseClick={() => setInfobox(null)}
+                      >
                         <div className="bg-white p-2 rounded max-w-xs border-2 border-gray-300">
                           <div className="text-lg">{marker.store}</div>
                           <div className="mt-2 text-sm text-gray-700">
