@@ -14,6 +14,7 @@ import { compose } from "ramda";
 import FadeIn from "react-fade-in";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
+import Footer from "../components/footer";
 import Layout from "../components/layout";
 import Loader from "../components/loader";
 import SEO from "../components/seo";
@@ -193,6 +194,7 @@ const IndexPage = () => {
     <Layout>
       <LoadScript
         id="script-loader"
+        loadingElement={Loader}
         googleMapsApiKey={process.env.GATSBY_GMAPS_KEY}
       >
         <SEO title="Home" />
@@ -282,6 +284,8 @@ const IndexPage = () => {
                   </div>
                 ))}
               </div>
+
+              <Footer />
             </div>
           </FadeIn>
         )}
