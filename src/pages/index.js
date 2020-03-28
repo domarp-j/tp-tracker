@@ -102,6 +102,8 @@ const formatLocations = locations =>
         ? toScreamingSnake(OUT_OF_STOCK)
         : toScreamingSnake(loc.available),
     type: loc.type || TP,
+    lat: loc.lat ? parseFloat(loc.lat) : loc.lat,
+    lng: loc.lng ? parseFloat(loc.lng) : loc.lng,
   }));
 
 // Filter out any locations that have "bad" availability values, e.g.
@@ -184,8 +186,8 @@ const IndexPage = () => {
           return {
             address: loc.address,
             store: loc.store,
-            lat: parseFloat(loc.lat),
-            lng: parseFloat(loc.lng),
+            lat: loc.lat,
+            lng: loc.lng,
           };
         }
         return {
@@ -264,14 +266,18 @@ const IndexPage = () => {
                 <h1 className="text-3xl inline ml-3">Get Me TP</h1>
               </div>
 
-              <h2 className="text-lg p-2 text-center">
-                Outwit the hoarders. Find available toilet paper (and hand
-                sanitizer) in Washington, DC.
+              <h2 className="text-md p-2 mt-4">
+                <span className="font-semibold">Outwit the hoarders.</span> Find
+                available toilet paper (and hand sanitizer) at Target, Walmart,
+                and Walgreens stores in Washington, DC.
               </h2>
-              <div className="text-sm italic mt-4 p-2 text-center">
-                Currently supports showing Target, Walmart, and Walgreens stores
-                in the DC-Maryland-Virginia area
-              </div>
+
+              {/*
+              <div className="mb-3">
+                <button className="float-right text-blue-600 underline">
+                  Feedback?
+                </button>
+              </div> */}
 
               <GoogleMap
                 id="map"
@@ -279,6 +285,7 @@ const IndexPage = () => {
                   height: "400px",
                   maxWidth: "800px",
                   position: "relative",
+                  marginTop: "24px",
                 }}
                 zoom={zoom}
                 center={center}
