@@ -5,6 +5,11 @@
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
  * - Netlify feedback
+ * - Add Google analytics
+ * - Change title to "Get Me TP"
+ * - Show address on markers on click/focus
+ * - Filter by state?
+ * - Filter by product once hand sanitizers are displayed
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -200,7 +205,7 @@ const IndexPage = () => {
               </div>
 
               <h2 className="text-lg p-2 text-center">
-                Outwit the hoaders. Find available toilet paper in Washington,
+                Outwit the hoarders. Find available toilet paper in Washington,
                 DC.
               </h2>
               <div className="text-sm italic mt-4 p-2 text-center">
