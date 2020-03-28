@@ -301,10 +301,10 @@ const IndexPage = () => {
 
               <div>
                 <button
-                  className={`border-t-2 border-l-2 border-gray-400 w-1/2 py-2 ${
+                  className={`w-1/2 py-2 ${
                     product === TP
                       ? "bg-green-600 text-white font-bold"
-                      : "bg-white hover:bg-gray-300 focus:bg-gray-300"
+                      : "bg-white hover:bg-gray-300 focus:bg-gray-300 border-t-2 border-l-2 border-gray-400"
                   }`}
                   onClick={() => {
                     setProduct(TP);
@@ -312,13 +312,13 @@ const IndexPage = () => {
                     markLocations(tpLocations);
                   }}
                 >
-                  Toilet Paper
+                  Find toilet paper
                 </button>
                 <button
-                  className={`border-t-2 border-l-2 border-r-2 border-gray-400 w-1/2 py-2 ${
+                  className={`w-1/2 py-2 ${
                     product === HS
                       ? "bg-green-600 text-white font-bold"
-                      : "bg-white hover:bg-gray-300 focus:bg-gray-300"
+                      : "bg-white hover:bg-gray-300 focus:bg-gray-300 border-t-2 border-l-2 border-r-2 border-gray-400 "
                   }`}
                   onClick={() => {
                     setProduct(HS);
@@ -326,7 +326,7 @@ const IndexPage = () => {
                     markLocations(hsLocations);
                   }}
                 >
-                  Hand Sanitizer
+                  Find hand sanitizer
                 </button>
               </div>
 
