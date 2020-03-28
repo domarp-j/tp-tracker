@@ -5,8 +5,6 @@
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
  * - Netlify feedback
- * - Add Google analytics
- * - Change title to "Get Me TP"
  * - Show address on markers on click/focus
  * - Filter by state?
  * - Filter by product once hand sanitizers are displayed
