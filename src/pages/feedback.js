@@ -13,24 +13,33 @@ const Feedback = ({ onCancel }) => (
         transform: "translate(-50%, -50%)",
       }}
     >
-      <form name="feedback-form" method="POST" data-netlify="true">
+      <form
+        name="feedback-form"
+        method="POST"
+        netlify-honeypot="bot-field"
+        data-netlify="true"
+      >
+        <input type="hidden" name="bot-field" />
         <label className="text-xl" htmlFor="feedback">
           Your feedback is always welcome and appreciated!
         </label>
         <textarea
           id="feedback"
           name="feedback"
-          className="block border border-gray-500 w-full mt-3"
+          className="p-2 block border border-gray-500 w-full mt-5"
           rows="6"
         ></textarea>
         <button
-          className="float-right text-xl mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="float-right text-xl mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           type="submit"
+          onClick={() => {
+            console.log("Thanks!");
+          }}
         >
           Send
         </button>
         <Link
-          className="hover:bg-gray-300 float-right text-xl mt-3 mr-3 py-2 px-4 rounded"
+          className="hover:bg-gray-300 float-right text-xl mt-5 mr-3 py-2 px-4 rounded"
           to="/"
         >
           Cancel
