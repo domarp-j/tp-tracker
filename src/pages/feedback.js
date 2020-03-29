@@ -16,20 +16,20 @@ const Feedback = () => (
         }}
       >
         <form
-          name="contact"
+          name="feedback"
           method="post"
           data-netlify="true"
           data-netlify-honeypot="bot-field"
           action="/thanks"
         >
-          <input type="hidden" name="form-name" value="contact" />
-          <label className="text-xl" htmlFor="feedback">
+          <input type="hidden" name="form-name" value="feedback" />
+          <label className="text-xl" htmlFor="message">
             Tell us how we can improve Get Me TP. Your feedback is important to
             us!
           </label>
           <textarea
-            id="feedback"
-            name="feedback"
+            id="message"
+            name="message"
             className="p-2 block border border-gray-500 w-full mt-5"
             rows="6"
           ></textarea>
