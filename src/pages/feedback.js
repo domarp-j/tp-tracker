@@ -3,7 +3,7 @@ import { Link } from "gatsby";
 
 import Layout from "../components/layout";
 
-const Feedback = ({ onCancel }) => (
+const Feedback = () => (
   <Layout>
     <div
       className="fixed w-full max-w-xl p-3"
@@ -14,14 +14,15 @@ const Feedback = ({ onCancel }) => (
       }}
     >
       <form
-        name="feedback-form"
+        name="contact"
         method="POST"
         netlify-honeypot="bot-field"
         data-netlify="true"
       >
         <input type="hidden" name="bot-field" />
+        <input type="hidden" name="feedback-form" value="contact" />
         <label className="text-xl" htmlFor="feedback">
-          Your feedback is always welcome and appreciated!
+          Your feedback is welcome and appreciated!
         </label>
         <textarea
           id="feedback"
@@ -34,6 +35,7 @@ const Feedback = ({ onCancel }) => (
           type="submit"
           onClick={() => {
             console.log("Thanks!");
+            window.location.pathname = "";
           }}
         >
           Send
