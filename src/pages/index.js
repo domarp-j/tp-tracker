@@ -271,6 +271,7 @@ const IndexPage = () => {
                 available toilet paper (and hand sanitizer) at Target, Walmart,
                 and Walgreens stores in Washington, DC.
               </h2>
+
               {/*
               <div className="mb-3 px-2">
                 <Link
