@@ -15,12 +15,11 @@ const Feedback = () => (
     >
       <form
         name="contact"
-        method="POST"
-        netlify-honeypot="bot-field"
+        method="post"
         data-netlify="true"
+        data-netlify-honeypot="bot-field"
       >
-        <input type="hidden" name="bot-field" />
-        <input type="hidden" name="feedback-form" value="contact" />
+        <input type="hidden" name="form-name" value="contact" />
         <label className="text-xl" htmlFor="feedback">
           Your feedback is welcome and appreciated!
         </label>
@@ -30,22 +29,20 @@ const Feedback = () => (
           className="p-2 block border border-gray-500 w-full mt-5"
           rows="6"
         ></textarea>
-        <button
-          className="float-right text-xl mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          type="submit"
-          onClick={() => {
-            console.log("Thanks!");
-            window.location.pathname = "";
-          }}
-        >
-          Send
-        </button>
-        <Link
-          className="hover:bg-gray-300 float-right text-xl mt-5 mr-3 py-2 px-4 rounded"
-          to="/"
-        >
-          Cancel
-        </Link>
+        <div className="mt-5">
+          <button
+            className="float-right text-xl bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Send
+          </button>
+          <Link
+            className="hover:bg-gray-300 float-right text-xl mr-3 py-2 px-4 rounded"
+            to="/"
+          >
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   </Layout>
