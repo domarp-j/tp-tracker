@@ -8,6 +8,8 @@ module.exports = {
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    `gatsby-plugin-postcss`,
+    `gatsby-plugin-netlify`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -20,7 +22,6 @@ module.exports = {
         icon: "src/images/tp-roll.png",
       },
     },
-    `gatsby-plugin-postcss`,
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
