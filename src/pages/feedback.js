@@ -23,16 +23,30 @@ const Feedback = () => (
           action="/thanks"
         >
           <input type="hidden" name="form-name" value="feedback" />
-          <label className="text-xl" htmlFor="message">
+          <div className="text-xl">
             Tell us how we can improve Get Me TP. Your feedback is important to
             us!
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            className="p-2 block border border-gray-500 w-full mt-5"
-            rows="6"
-          ></textarea>
+          </div>
+          <div className="mt-5">
+            <label className="text-lg" htmlFor="email">
+              Email (optional)
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="p-2 block border border-gray-500 w-full mt-1 mb-5"
+            />
+            <label className="text-lg" htmlFor="message">
+              Feedback
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              className="p-2 block border border-gray-500 w-full mt-1"
+              rows="6"
+            ></textarea>
+          </div>
           <div className="mt-5">
             <button
               className="float-right text-xl bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
