@@ -11,6 +11,7 @@ import axios from "axios";
 import { compose } from "ramda";
 import FadeIn from "react-fade-in";
 import { GoogleMap, InfoBox, LoadScript, Marker } from "@react-google-maps/api";
+import { Share2 } from "react-feather";
 import { Link } from "gatsby";
 
 import Footer from "../components/footer";
@@ -244,6 +245,17 @@ const IndexPage = () => {
     });
   }, []);
 
+  const share = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Outwit the hoarders. Find toilet paper near you.",
+          url: "http://get-me-tp.today/",
+        })
+        .catch(console.error);
+    }
+  };
+
   return (
     <Layout>
       <LoadScript
@@ -269,11 +281,17 @@ const IndexPage = () => {
                 and Walgreens stores in Washington, DC.
               </h2>
 
-              <div className="mb-3 px-2">
-                <Link
-                  className="float-right text-blue-600 underline"
-                  to="/feedback"
-                >
+              <div className="mb-1 px-2 w-full flex justify-end">
+                {navigator.share && (
+                  <button
+                    title="Share"
+                    className="inline-block pr-2"
+                    onClick={share}
+                  >
+                    <Share2 />
+                  </button>
+                )}
+                <Link className="text-blue-600 underline" to="/feedback">
                   Feedback?
                 </Link>
               </div>
@@ -284,7 +302,7 @@ const IndexPage = () => {
                   height: "400px",
                   maxWidth: "800px",
                   position: "relative",
-                  marginTop: "24px",
+                  marginTop: "15px",
                 }}
                 zoom={zoom}
                 center={center}
