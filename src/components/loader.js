@@ -40,6 +40,7 @@ const Loader = () => {
             <div className="mt-5 text-left">We broke something. Apologies!</div>
             <div className="mt-3 text-left">
               We're working to get you to toilet paper as fast as possible.
+              Please come back in a few minutes.
             </div>
           </>
         )}
