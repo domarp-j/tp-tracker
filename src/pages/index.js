@@ -1,7 +1,6 @@
 /**
  * TODO:
  * - Error handling
- *   - Maps unavailability
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
  * - Filter by state?
