@@ -4,6 +4,7 @@
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
  * - Filter by state?
+ * - Only display a count of out-of-stock stores rather than displaying them all
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -275,10 +276,10 @@ const IndexPage = () => {
                 <h1 className="text-3xl inline ml-3">Get Me TP</h1>
               </div>
 
-              <h2 className="text-md p-2 mt-4">
-                <span className="font-semibold">Outwit the hoarders.</span> Find
-                available toilet paper (and hand sanitizer) at Target, Walmart,
-                and Walgreens stores in Washington, DC.
+              <h2 className="text-md text-justify p-2 my-4">
+                Find available toilet paper (and hand sanitizer) at Target,
+                Walmart, and Walgreens stores in Washington D.C., Maryland, and
+                Virginia.
               </h2>
 
               <div className="mb-1 px-2 w-full flex justify-end">
@@ -433,6 +434,13 @@ const IndexPage = () => {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-5 text-justify">
+                <span className="font-bold">DISCLAIMER</span>: This data in this
+                application is only as accurate as the data provided by
+                supported stores.
+              </div>
+
               <Footer />
             </div>
           </FadeIn>

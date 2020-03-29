@@ -1,7 +1,7 @@
 import React from "react";
 
 const Footer = () => (
-  <footer className="text-center mt-8 mb-4">
+  <footer className="text-center my-4">
     © {new Date().getFullYear()}. Built by{" "}
     <a
       href="https://github.com/sepehr500"
