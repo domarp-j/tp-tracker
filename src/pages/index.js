@@ -1,11 +1,3 @@
-/**
- * TODO:
- * - Error handling
- *   - Failed to fetch stores
- *   - Geocode address isn't stored
- * - Filter by state?
- */
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { compose } from "ramda";
