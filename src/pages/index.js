@@ -4,7 +4,6 @@
  *   - Maps unavailability
  *   - Failed to fetch stores
  *   - Geocode address isn't stored
- * - Netlify feedback
  * - Filter by state?
  */
 
@@ -13,6 +12,7 @@ import axios from "axios";
 import { compose } from "ramda";
 import FadeIn from "react-fade-in";
 import { GoogleMap, InfoBox, LoadScript, Marker } from "@react-google-maps/api";
+import { Link } from "gatsby";
 
 import Footer from "../components/footer";
 import Layout from "../components/layout";
@@ -272,12 +272,14 @@ const IndexPage = () => {
                 and Walgreens stores in Washington, DC.
               </h2>
 
-              {/*
               <div className="mb-3">
-                <button className="float-right text-blue-600 underline">
+                <Link
+                  className="float-right text-blue-600 underline"
+                  to="/feedback"
+                >
                   Feedback?
-                </button>
-              </div> */}
+                </Link>
+              </div>
 
               <GoogleMap
                 id="map"
