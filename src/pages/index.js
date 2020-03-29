@@ -184,15 +184,13 @@ const IndexPage = () => {
       .map(loc => {
         if (loc.lat && loc.lng) {
           return {
-            address: loc.address,
-            store: loc.store,
+            ...loc,
             lat: loc.lat,
             lng: loc.lng,
           };
         }
         return {
-          address: loc.address,
-          store: loc.store,
+          ...loc,
           ...geocodeData[loc.address],
         };
       });
@@ -312,6 +310,16 @@ const IndexPage = () => {
                           <div className="text-lg">{marker.store}</div>
                           <div className="mt-2 text-sm text-gray-700">
                             {marker.address}
+                          </div>
+                          <div className="mt-2">
+                            <a
+                              className="text-blue-600 text-sm underline"
+                              href={marker.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View product
+                            </a>
                           </div>
                         </div>
                       </InfoBox>
