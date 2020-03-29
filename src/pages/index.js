@@ -271,15 +271,15 @@ const IndexPage = () => {
                 available toilet paper (and hand sanitizer) at Target, Walmart,
                 and Walgreens stores in Washington, DC.
               </h2>
-
-              <div className="mb-3">
+              {/*
+              <div className="mb-3 px-2">
                 <Link
                   className="float-right text-blue-600 underline"
                   to="/feedback"
                 >
                   Feedback?
                 </Link>
-              </div>
+              </div> */}
 
               <GoogleMap
                 id="map"
