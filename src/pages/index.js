@@ -11,7 +11,6 @@ import Layout from "../components/layout";
 import Loader from "../components/loader";
 import SEO from "../components/seo";
 import geocodeData from "../data/geocodes.json";
-import { write } from "../db/verifications";
 import tpRoll from "../images/tp-roll.png";
 
 import "./index.css";
@@ -139,7 +138,7 @@ const IndexPage = () => {
   const [hsLocations, setHsLocations] = useState([]);
 
   // Currently selected product
-  const [product, setProduct] = useState(TP);
+  const [productType, setProductType] = useState(TP);
 
   // Coordinates to place map markers
   const [markers, setMarkers] = useState([]);
@@ -182,13 +181,23 @@ const IndexPage = () => {
             lng: loc.lng,
           };
         }
-        return {
-          ...loc,
-          ...geocodeData[loc.address],
-        };
-      });
+
+        const geocode = geocodeData[loc.address];
+
+        if (geocode) {
+          return {
+            ...loc,
+            ...geocode,
+          };
+        }
+
+        return null;
+      })
+      .filter(loc => loc);
 
     setMarkers(markers);
+
+    return locations;
   };
 
   const resetMap = () => {
@@ -257,8 +266,6 @@ const IndexPage = () => {
         googleMapsApiKey={process.env.GATSBY_GMAPS_KEY}
       >
         <SEO title="Home" />
-
-        <button onClick={write}>Test Write</button>
 
         {loading ? (
           <Loader />
@@ -354,12 +361,12 @@ const IndexPage = () => {
               <div>
                 <button
                   className={`w-1/2 py-2 ${
-                    product === TP
+                    productType === TP
                       ? "bg-green-600 text-white font-bold"
                       : "bg-white hover:bg-gray-300 focus:bg-gray-300 border-t-2 border-l-2 border-gray-400"
                   }`}
                   onClick={() => {
-                    setProduct(TP);
+                    setProductType(TP);
                     resetMap();
                     markLocations(tpLocations);
                   }}
@@ -368,12 +375,12 @@ const IndexPage = () => {
                 </button>
                 <button
                   className={`w-1/2 py-2 ${
-                    product === HS
+                    productType === HS
                       ? "bg-green-600 text-white font-bold"
                       : "bg-white hover:bg-gray-300 focus:bg-gray-300 border-t-2 border-l-2 border-r-2 border-gray-400 "
                   }`}
                   onClick={() => {
-                    setProduct(HS);
+                    setProductType(HS);
                     resetMap();
                     markLocations(hsLocations);
                   }}
@@ -383,7 +390,7 @@ const IndexPage = () => {
               </div>
 
               <div className="border-2 border-gray-400">
-                {(product === TP ? tpLocations : hsLocations).map(loc => (
+                {(productType === TP ? tpLocations : hsLocations).map(loc => (
                   <div
                     key={`${loc.store} ${loc.id} ${loc.address}`}
                     className={`border-b-2 border-gray-400 p-4 relative ${
