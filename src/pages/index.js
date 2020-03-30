@@ -11,6 +11,7 @@ import Layout from "../components/layout";
 import Loader from "../components/loader";
 import SEO from "../components/seo";
 import geocodeData from "../data/geocodes.json";
+import { write } from "../db/verifications";
 import tpRoll from "../images/tp-roll.png";
 
 import "./index.css";
@@ -256,6 +257,8 @@ const IndexPage = () => {
         googleMapsApiKey={process.env.GATSBY_GMAPS_KEY}
       >
         <SEO title="Home" />
+
+        <button onClick={write}>Test Write</button>
 
         {loading ? (
           <Loader />
