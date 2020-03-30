@@ -277,7 +277,7 @@ const IndexPage = () => {
                 <h1 className="text-3xl inline ml-3">Get Me TP</h1>
               </div>
 
-              <h2 className="text-md text-justify p-2 my-4">
+              <h2 className="text-md p-2 my-4">
                 Find available toilet paper (and hand sanitizer) at Target,
                 Walmart, and Walgreens stores in Washington D.C., Maryland, and
                 Virginia.
@@ -436,7 +436,7 @@ const IndexPage = () => {
                 ))}
               </div>
 
-              <div className="mt-5 text-justify">
+              <div className="mt-5 px-2">
                 <span className="font-bold">DISCLAIMER</span>: This data in this
                 application is only as accurate as the data provided by
                 supported stores.
