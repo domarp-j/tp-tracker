@@ -411,8 +411,17 @@ const IndexPage = () => {
               </div>
 
               <h2 className="text-md p-2 my-4">
-                Find available toilet paper (and hand sanitizer) at stores in
-                Washington D.C., Maryland, and Virginia.
+                Find and report available toilet paper (and hand sanitizer) at
+                stores in Washington D.C., Maryland, and Virginia.
+              </h2>
+              <h2 className="text-md p-2 my-4">
+                Tip:{" "}
+                <strong>
+                  Store inventory(especially Target) can be innacurate.
+                </strong>{" "}
+                If you can call ahead and post availability in this site, you
+                can prevent people from going out when they don't need to,{" "}
+                <em>and maybe prevent the spread.</em>
               </h2>
 
               <div className="mb-1 px-2 w-full flex justify-end">
