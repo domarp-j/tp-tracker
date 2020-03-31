@@ -11,7 +11,12 @@ export const VerifyModal = ({ onInStock, onOutOfStock, onCancel }) => {
       {modalPage === 0 && (
         <SweetAlert showConfirm={false} onConfirm={() => {}} title="">
           <h2 className="text-3xl pb-6 font-bold">Is this item in stock?</h2>
-          <div className="flex justify justify-around mb-5">
+          <p className="mb-8 text-lg text-left px-6">
+            If you have been to this store in the{" "}
+            <span className="font-semibold">past day</span>, let other users
+            know if this product is available or unavailable.
+          </p>
+          <div className="flex justify justify-around mb-6">
             <button
               title="In stock"
               onClick={() => {
