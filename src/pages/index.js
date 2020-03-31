@@ -10,7 +10,13 @@ import Footer from "../components/footer";
 import Layout from "../components/layout";
 import Loader from "../components/loader";
 import SEO from "../components/seo";
+import VerifyModal from "../components/verifymodal";
+
 import geocodeData from "../data/geocodes.json";
+import {
+  read as readVerifications,
+  write as writeVerifications,
+} from "../db/verifications";
 import tpRoll from "../images/tp-roll.png";
 
 import "./index.css";
@@ -71,6 +77,13 @@ const AVAILABILITY_BADGE = {
   ),
 };
 
+const STORES = {
+  WALMART: "Walmart",
+  TARGET: "Target",
+  WALGREENS: "Walgreens",
+  CVS: "CVS",
+};
+
 /*****************************************************************/
 // Functions
 /*****************************************************************/
@@ -88,7 +101,7 @@ const toScreamingSnake = str => str.toUpperCase().replace(/\s/g, "_");
 const formatLocations = locations =>
   locations.map(loc => ({
     ...loc,
-    store: `${loc.store[0].toUpperCase()}${loc.store.slice(1)}`,
+    store: STORES[loc.store.toUpperCase()],
     available:
       loc.available === NOT_SOLD_IN_STORE
         ? toScreamingSnake(OUT_OF_STOCK)
@@ -131,33 +144,48 @@ const filterDuplicateLocations = locations => {
 /*****************************************************************/
 
 const IndexPage = () => {
+  /*****************************************************************/
+  // State
+  /*****************************************************************/
+
   // Toilet paper locations
   const [tpLocations, setTpLocations] = useState([]);
-
   // Hand sanitizer locations
   const [hsLocations, setHsLocations] = useState([]);
-
   // Currently selected product
   const [productType, setProductType] = useState(TP);
-
   // Coordinates to place map markers
   const [markers, setMarkers] = useState([]);
-
+  // Verification modal
+  const [storeToVerify, setStoreToVerify] = useState(null);
   // Map zoom level
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-
   // Map center coordinates
   const [center, setCenter] = useState(DEFAULT_CENTER_COORDS);
-
+  // User's IP address
+  const [userIP, setIP] = useState();
   // Loading state
   const [loading, setLoading] = useState(true);
-
   // Display info-box for a specific marker
   const [infobox, setInfobox] = useState();
+  // Store verification data
+  const [verifications, setVerifications] = useState({
+    [TP]: {},
+    [HS]: {},
+  });
+
+  /*****************************************************************/
+  // Refs
+  /*****************************************************************/
 
   // Ref for GoogleMap component
   const mapRef = useRef(null);
 
+  /*****************************************************************/
+  // Component-Scoped Functions
+  /*****************************************************************/
+
+  // When "Show on map" is selected, scroll to map and show marker
   const showAddressOnMap = address => {
     if (!geocodeData[address]) return;
     scrollToMap();
@@ -165,53 +193,79 @@ const IndexPage = () => {
     setZoom(15);
   };
 
+  // When a marker is cleared, zoom in and focus on it
   const focusOnMarker = coords => {
     setCenter(coords);
     setZoom(15);
   };
 
+  const getCoords = location => {
+    // If API already provided lat/lng, use those values
+    if (location.lat && location.lng) {
+      return {
+        ...location,
+        lat: location.lat,
+        lng: location.lng,
+      };
+    }
+    // Get geocode data from local JSON file, if it's there
+    if (geocodeData[location.address]) {
+      return {
+        ...location,
+        ...geocodeData[location.address],
+      };
+    }
+    return null;
+  };
+
+  // Set marker locations based on stores with TP/HS availability
   const markLocations = locations => {
     const markers = locations
       .filter(loc => isAvailable(loc.available))
-      .map(loc => {
-        if (loc.lat && loc.lng) {
-          return {
-            ...loc,
-            lat: loc.lat,
-            lng: loc.lng,
-          };
-        }
-
-        const geocode = geocodeData[loc.address];
-
-        if (geocode) {
-          return {
-            ...loc,
-            ...geocode,
-          };
-        }
-
-        return null;
-      })
+      .map(loc => getCoords(loc))
       .filter(loc => loc);
 
     setMarkers(markers);
-
     return locations;
   };
 
+  // Get verification/dispute data for locations
+  const getVerificationData = async (locations, productType) => {
+    const res = await Promise.all(
+      locations
+        .filter(loc => isAvailable(loc.available))
+        .map(loc => readVerifications({ store: loc, productType }))
+    );
+
+    setVerifications({
+      ...verifications,
+      [productType]: {
+        ...verifications[productType],
+        ...res
+          .filter(vData => vData)
+          .reduce((accum, vData) => {
+            accum[Object.keys(vData)[0]] = Object.values(vData)[0];
+            return accum;
+          }, {}),
+      },
+    });
+  };
+
+  // Reset the map to center on Washington, DC
   const resetMap = () => {
     setZoom(DEFAULT_ZOOM);
     setCenter(DEFAULT_CENTER_COORDS);
     setInfobox(null);
   };
 
+  // When "Show on map" is selected, scroll to the map
   const scrollToMap = () => {
     if (!mapRef) return;
     if (!mapRef.current) return;
     window.scrollTo(0, mapRef.current.offsetTop);
   };
 
+  // Keep map zoom in sync with local state zoom
   const handleZoomChanged = () => {
     if (!mapRef) return;
     if (!mapRef.current) return;
@@ -219,9 +273,27 @@ const IndexPage = () => {
     if (mapZoom !== zoom) setZoom(mapZoom);
   };
 
+  // Add share link using Web Share API
+  const shareApp = () => {
+    if (!navigator.share) return;
+
+    navigator
+      .share({
+        title: "Find toilet paper and hand sanitizer in the DMV area.",
+        url: "http://get-me-tp.today/",
+      })
+      .catch(console.error);
+  };
+
+  /*****************************************************************/
+  // Mount/Update/Unmount Behavior
+  /*****************************************************************/
+
   useEffect(() => {
+    // Fetch store data from API
     axios.get(process.env.GATSBY_API_URL).then(res => {
       if (!res.data) return; // TODO: Error handling
+
       const locations = compose(
         sortLocations,
         filterInvalidLocations,
@@ -229,7 +301,14 @@ const IndexPage = () => {
       )(res.data);
 
       compose(
-        () => setLoading(false),
+        locations => {
+          getVerificationData(locations, TP);
+          return locations;
+        },
+        locations => {
+          setLoading(false);
+          return locations;
+        },
         markLocations,
         locations => {
           setTpLocations(locations);
@@ -247,16 +326,20 @@ const IndexPage = () => {
     });
   }, []);
 
-  const share = () => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Outwit the hoarders. Find toilet paper near you.",
-          url: "http://get-me-tp.today/",
-        })
-        .catch(console.error);
-    }
-  };
+  useEffect(() => {
+    // Get user IP address to prevent duplicate
+    axios.get("https://www.cloudflare.com/cdn-cgi/trace").then(result => {
+      // convert plain text to json
+      var data = result.data.replace(/[\r\n]+/g, '","').replace(/\=+/g, '":"');
+      data = '{"' + data.slice(0, data.lastIndexOf('","')) + '"}';
+      var jsondata = JSON.parse(data);
+      setIP(jsondata.ip);
+    });
+  }, []);
+
+  /*****************************************************************/
+  // Component JSX
+  /*****************************************************************/
 
   return (
     <Layout>
@@ -271,6 +354,31 @@ const IndexPage = () => {
           <Loader />
         ) : (
           <FadeIn>
+            {storeToVerify && (
+              <VerifyModal
+                onInStock={() => {
+                  writeVerifications({
+                    store: storeToVerify,
+                    productType,
+                    userIP,
+                    available: true,
+                  });
+                  getVerificationData([storeToVerify], productType);
+                }}
+                onOutOfStock={() => {
+                  writeVerifications({
+                    store: storeToVerify,
+                    productType,
+                    userIP,
+                    available: false,
+                  });
+                  getVerificationData([storeToVerify], productType);
+                }}
+                onCancel={() => {
+                  setStoreToVerify(null);
+                }}
+              />
+            )}
             <div>
               <div className="home-header mt-6 mx-auto flex items-center justify-center">
                 <img src={tpRoll} alt="Toilet paper roll" className="w-16" />
@@ -278,9 +386,8 @@ const IndexPage = () => {
               </div>
 
               <h2 className="text-md p-2 my-4">
-                Find available toilet paper (and hand sanitizer) at Target,
-                Walmart, and Walgreens stores in Washington D.C., Maryland, and
-                Virginia.
+                Find available toilet paper (and hand sanitizer) at stores in
+                Washington D.C., Maryland, and Virginia.
               </h2>
 
               <div className="mb-1 px-2 w-full flex justify-end">
@@ -288,7 +395,7 @@ const IndexPage = () => {
                   <button
                     title="Share"
                     className="inline-block pr-2"
-                    onClick={share}
+                    onClick={shareApp}
                   >
                     <Share2 />
                   </button>
@@ -339,6 +446,12 @@ const IndexPage = () => {
                             >
                               View product
                             </a>
+                            <button
+                              className="text-blue-600 underline pl-2 text-sm"
+                              onClick={() => setStoreToVerify(marker)}
+                            >
+                              Verify
+                            </button>
                           </div>
                         </div>
                       </InfoBox>
@@ -349,7 +462,7 @@ const IndexPage = () => {
                   onClick={resetMap}
                   className="bg-white hover:bg-gray-200 shadow-xl py-1 px-2 absolute z-50 border border-gray-400"
                   style={{
-                    bottom: "4px",
+                    bottom: "8px",
                     left: "50%",
                     transform: "translateX(-50%)",
                   }}
@@ -382,6 +495,7 @@ const IndexPage = () => {
                   onClick={() => {
                     setProductType(HS);
                     resetMap();
+                    getVerificationData(hsLocations, HS);
                     markLocations(hsLocations);
                   }}
                 >
@@ -397,8 +511,10 @@ const IndexPage = () => {
                       !isAvailable(loc.available) ? "opacity-50" : ""
                     }`}
                   >
-                    <div className="text-xl">{loc.store}</div>
-                    <div className="text-gray-700 mt-2">{loc.address}</div>
+                    <div className="text-2xl">{loc.store}</div>
+                    <div className="text-gray-700 mt-2">
+                      {loc.address.toUpperCase()}
+                    </div>
                     {isAvailable(loc.available) && (
                       <div className="mt-2">
                         <button
@@ -425,6 +541,16 @@ const IndexPage = () => {
                         )}
                       </div>
                     )}
+                    {isAvailable(loc.available) && (
+                      <div className="mt-2">
+                        <button
+                          className="text-blue-600 underline"
+                          onClick={() => setStoreToVerify(loc)}
+                        >
+                          Is this correct?
+                        </button>
+                      </div>
+                    )}
                     <div className="absolute top-0 right-0 p-4">
                       {AVAILABILITY_BADGE[loc.available] || (
                         <div className={`bg-gray-600 ${BADGE_CLASSES}`}>
@@ -432,14 +558,39 @@ const IndexPage = () => {
                         </div>
                       )}
                     </div>
+
+                    <div className="absolute bottom-0 right-0 p-4 text-sm text-right text-gray-700">
+                      {verifications[productType][loc.address] &&
+                        verifications[productType][loc.address].filter(
+                          val => val.available
+                        ).length > 0 && (
+                          <div>
+                            Verified by{" "}
+                            {
+                              verifications[productType][loc.address].filter(
+                                val => val.available
+                              ).length
+                            }{" "}
+                            users
+                          </div>
+                        )}
+                      {verifications[productType][loc.address] &&
+                        verifications[productType][loc.address].filter(
+                          val => !val.available
+                        ).length > 0 && (
+                          <div>
+                            Disputed by{" "}
+                            {
+                              verifications[productType][loc.address].filter(
+                                val => !val.available
+                              ).length
+                            }{" "}
+                            users
+                          </div>
+                        )}
+                    </div>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-5 px-2">
-                <span className="font-bold">DISCLAIMER</span>: This data in this
-                application is only as accurate as the data provided by
-                supported stores.
               </div>
 
               <Footer />
