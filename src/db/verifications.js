@@ -30,6 +30,12 @@ const db = firebase.database();
 // Read/Write API
 /*****************************************************************/
 
+// Only verifications from the past x hours will be fetched
+const VERIFICATION_RANGE_HRS = 24;
+let dateThreshold = new Date().setHours(
+  new Date().getHours() - VERIFICATION_RANGE_HRS
+);
+
 /**
  * Fetch verification data for each store address
  * @param {object[]} stores - A list of stores.
