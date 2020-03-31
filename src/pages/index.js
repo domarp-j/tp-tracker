@@ -285,6 +285,15 @@ const IndexPage = () => {
       .catch(console.error);
   };
 
+  const verificationsForLocation = location =>
+    verifications[productType][location.address];
+
+  const locationUpvotes = location =>
+    verificationsForLocation(location).filter(val => val.available).length;
+
+  const locationDownvotes = location =>
+    verificationsForLocation(location).filter(val => !val.available).length;
+
   /*****************************************************************/
   // Mount/Update/Unmount Behavior
   /*****************************************************************/
@@ -560,33 +569,13 @@ const IndexPage = () => {
                     </div>
 
                     <div className="absolute bottom-0 right-0 p-4 text-sm text-right text-gray-700">
-                      {verifications[productType][loc.address] &&
-                        verifications[productType][loc.address].filter(
-                          val => val.available
-                        ).length > 0 && (
-                          <div>
-                            Verified by{" "}
-                            {
-                              verifications[productType][loc.address].filter(
-                                val => val.available
-                              ).length
-                            }{" "}
-                            users
-                          </div>
+                      {verificationsForLocation(loc) &&
+                        locationUpvotes(loc) > 0 && (
+                          <div>Verified by {locationUpvotes(loc)}</div>
                         )}
-                      {verifications[productType][loc.address] &&
-                        verifications[productType][loc.address].filter(
-                          val => !val.available
-                        ).length > 0 && (
-                          <div>
-                            Disputed by{" "}
-                            {
-                              verifications[productType][loc.address].filter(
-                                val => !val.available
-                              ).length
-                            }{" "}
-                            users
-                          </div>
+                      {verificationsForLocation(loc) &&
+                        locationDownvotes(loc) > 0 && (
+                          <div>Disputed by {locationDownvotes(loc)}</div>
                         )}
                     </div>
                   </div>
