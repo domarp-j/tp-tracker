@@ -3,7 +3,8 @@ import axios from "axios";
 import { compose } from "ramda";
 import FadeIn from "react-fade-in";
 import { GoogleMap, InfoBox, LoadScript, Marker } from "@react-google-maps/api";
-import { Share2 } from "react-feather";
+import { Share2, MapPin, Link as LinkIcon } from "react-feather";
+import dayjs from "dayjs";
 import { Link } from "gatsby";
 
 import Footer from "../components/footer";
@@ -291,8 +292,23 @@ const IndexPage = () => {
   const locationUpvotes = location =>
     verificationsForLocation(location).filter(val => val.available).length;
 
+  const locationDownvoteTimestamp = location =>
+    new Date(
+      verificationsForLocation(location).filter(
+        val => !val.available
+      )[0]?.timestamp
+    );
+
+  const locationUpvoteTimestamp = location =>
+    verificationsForLocation(location).filter(val => val.available)[0]
+      ?.timestamp;
+
   const locationDownvotes = location =>
     verificationsForLocation(location).filter(val => !val.available).length;
+
+  const findMarker = () => {
+    return markers.find(marker => marker.address === infobox.address);
+  };
 
   /*****************************************************************/
   // Mount/Update/Unmount Behavior
@@ -414,6 +430,56 @@ const IndexPage = () => {
                 </Link>
               </div>
 
+              <div className="relative">
+                {infobox && (
+                  <div
+                    className="bg-white p-2 rounded max-w-xs border-2 border-gray-300 absolute z-30"
+                    style={{ top: "80px", width: "135px" }}
+                  >
+                    <div className="text-lg">{findMarker().store}</div>
+                    <div className="mt-2 text-sm text-gray-700">
+                      {findMarker().address}
+                    </div>
+                    <div className="mt-2">
+                      <a
+                        className="mb-2 block"
+                        title="Go to store page"
+                        href={findMarker().url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <LinkIcon size="20" />
+                      </a>
+                      <button
+                        className="text-blue-600 underline text-sm"
+                        onClick={() => setStoreToVerify(findMarker().address)}
+                      >
+                        Verify
+                      </button>
+                      {verificationsForLocation(findMarker()) &&
+                        locationUpvotes(findMarker()) > 0 && (
+                          <div className="ml-auto text-sm text-gray-700">
+                            <span className="text-green-600">Verified</span> by{" "}
+                            {locationUpvotes(findMarker())} @{" "}
+                            {dayjs(
+                              locationUpvoteTimestamp(findMarker())
+                            ).format("h:mm A")}
+                          </div>
+                        )}
+                      {verificationsForLocation(findMarker()) &&
+                        locationDownvotes(findMarker()) > 0 && (
+                          <div>
+                            <span className="text-red-600">Disputed</span> by{" "}
+                            {locationDownvotes(findMarker())} @{" "}
+                            {dayjs(
+                              locationDownvoteTimestamp(findMarker())
+                            ).format("h:mm A")}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                )}
+              </div>
               <GoogleMap
                 id="map"
                 mapContainerStyle={{
@@ -436,35 +502,6 @@ const IndexPage = () => {
                         setInfobox(marker);
                       }}
                     />
-                    {infobox && infobox.address === marker.address && (
-                      <InfoBox
-                        position={marker}
-                        onCloseClick={() => setInfobox(null)}
-                      >
-                        <div className="bg-white p-2 rounded max-w-xs border-2 border-gray-300">
-                          <div className="text-lg">{marker.store}</div>
-                          <div className="mt-2 text-sm text-gray-700">
-                            {marker.address.toUpperCase()}
-                          </div>
-                          <div className="mt-2">
-                            <a
-                              className="text-blue-600 text-sm underline"
-                              href={marker.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              View product
-                            </a>
-                            <button
-                              className="text-blue-600 underline pl-2 text-sm"
-                              onClick={() => setStoreToVerify(marker)}
-                            >
-                              Verify
-                            </button>
-                          </div>
-                        </div>
-                      </InfoBox>
-                    )}
                   </div>
                 ))}
                 <button
@@ -525,29 +562,41 @@ const IndexPage = () => {
                       {loc.address.toUpperCase()}
                     </div>
                     {isAvailable(loc.available) && (
-                      <div className="mt-2">
+                      <div className="mt-2 flex">
                         <button
+                          title="View on map"
                           className="text-blue-600 underline"
                           onClick={() => {
                             showAddressOnMap(loc.address);
                             setInfobox(loc);
                           }}
                         >
-                          Show on map
+                          <MapPin size="20px" />
                         </button>
                         {loc.url && (
                           <>
                             ｜
                             <a
+                              title="Go to store page"
                               className="text-blue-600 underline"
                               href={loc.url}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              View product
+                              <LinkIcon />
                             </a>
                           </>
                         )}
+                        {verificationsForLocation(loc) &&
+                          locationUpvotes(loc) > 0 && (
+                            <div className="ml-auto text-sm text-gray-700">
+                              <span className="text-green-600">Verified</span>{" "}
+                              by {locationUpvotes(loc)} @{" "}
+                              {dayjs(locationUpvoteTimestamp(loc)).format(
+                                "h:mm A"
+                              )}
+                            </div>
+                          )}
                       </div>
                     )}
                     {isAvailable(loc.available) && (
@@ -570,12 +619,14 @@ const IndexPage = () => {
 
                     <div className="absolute bottom-0 right-0 p-4 text-sm text-right text-gray-700">
                       {verificationsForLocation(loc) &&
-                        locationUpvotes(loc) > 0 && (
-                          <div>Verified by {locationUpvotes(loc)}</div>
-                        )}
-                      {verificationsForLocation(loc) &&
                         locationDownvotes(loc) > 0 && (
-                          <div>Disputed by {locationDownvotes(loc)}</div>
+                          <div>
+                            <span className="text-red-600">Disputed</span> by{" "}
+                            {locationDownvotes(loc)} @{" "}
+                            {dayjs(locationDownvoteTimestamp(loc)).format(
+                              "h:mm A"
+                            )}
+                          </div>
                         )}
                     </div>
                   </div>

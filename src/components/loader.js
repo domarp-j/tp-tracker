@@ -35,6 +35,9 @@ const Loader = () => {
             width: 200,
           }}
         />
+        {!error && (
+          <div className="mt-5">Gathering TP...This might take a while...</div>
+        )}
         {error && (
           <>
             <div className="mt-5 text-left">We broke something. Apologies!</div>
