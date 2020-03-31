@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: `Get Me TP`,
-    description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
+    description: `Track availability of toilet paper at stores in the DC-Maryland-Virginia area`,
     author: `Sepehr Sobhani and Pramod Jacob`,
   },
   plugins: [
@@ -15,7 +15,7 @@ module.exports = {
       options: {
         name: `Get Me TP`,
         short_name: `Get Me TP`,
-        description: `Track availability of toilet paper at Walmart, Target, and Walgreens stores in the DC-Maryland-Virginia area`,
+        description: `Track availability of toilet paper at stores in the DC-Maryland-Virginia area`,
         start_url: `/`,
         background_color: `#fff`,
         display: `minimal-ui`,
