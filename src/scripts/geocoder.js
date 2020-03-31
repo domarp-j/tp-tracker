@@ -9,9 +9,6 @@ dotenv.config({ path: ".env.development" });
 
 const main = async () => {
   try {
-    // Track whether geocodes JSON needs to be overwritten
-    let newGeocodesRequired = false;
-
     console.log("Retrieving existing geocodes from JSON file...");
     let geocodes = require("../data/geocodes.json");
 
@@ -19,7 +16,7 @@ const main = async () => {
     const res = await axios.get(process.env.GATSBY_API_URL);
     if (!res.data) {
       console.log("API did not return data. Aborting...");
-      process.exitCode(1);
+      process.exit(1);
     }
 
     console.log("Filtering out duplicate locations...");
@@ -38,18 +35,14 @@ const main = async () => {
       // Skip if geocode is already logged
       if (geocodes[location.address]) return;
 
-      newGeocodesRequired = true;
-
-      // If latitute & longitude are known from API, log them
       if (location.lat && location.lng) {
+        // Get lat/lng from API
         geocodes[location.address] = {
           lat: parseFloat(location.lat),
           lng: parseFloat(location.lng),
         };
-      }
-
-      // Otherwise, mark address as a Geocoding API candidate
-      else {
+      } else {
+        // Mark address for Geocoding API
         geocodeCandidates.push(location.address);
       }
     });
@@ -58,11 +51,12 @@ const main = async () => {
       console.log("New addresses found that require geocoding...");
     } else {
       console.log("No new addresses found.");
+      process.exit(0);
     }
 
     // Create a promise for each Geocoding API request
     // Add a timeout buffer between each request to prevent API overloading
-    const geocodeReqs = geocodeCandidates.map(
+    const geocodeReqs = geocodeCandidates.slice().map(
       (address, index) =>
         new Promise(resolve => {
           setTimeout(async () => {
@@ -75,24 +69,26 @@ const main = async () => {
               }
             );
 
-            // Skip any encountered errors
+            // Skip if any errors are encountered
             if (res.data.error_message) return;
 
             // Retrieve lat/lng coordinates
             const coords = res.data.results[0].geometry.location;
 
+            console.log("Coordinates are", coords);
+
             // Update geocodes object with coordinates
             geocodes[address] = coords;
+
             resolve();
           }, 200 * index);
         })
     );
 
-    Promise.all(geocodeReqs).then(() => {
-      if (!newGeocodesRequired) return;
-      console.log("Writing new geocode data file...");
-      writeFile("src/data/geocodes.json", JSON.stringify(geocodes));
-    });
+    await Promise.all(geocodeReqs);
+
+    console.log("Writing new geocode data file...");
+    writeFile("src/data/geocodes.json", JSON.stringify(geocodes));
   } catch (error) {
     console.error(error);
   }

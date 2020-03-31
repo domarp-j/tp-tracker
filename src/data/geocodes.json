@@ -422,5 +422,301 @@
   "1090 Stafford Market Pl Stafford VA 22556-4523": {
     "lat": 38.47164230000001,
     "lng": -77.4079768
+  },
+  "3050-A NUTLEY ST FAIRFAX VA 22031": {
+    "lat": 38.87118648,
+    "lng": -77.26361072
+  },
+  "10320 MAIN ST FAIRFAX VA 22030": {
+    "lat": 38.84605648,
+    "lng": -77.30259314
+  },
+  "225 MAPLE AVE E VIENNA VA 22180": {
+    "lat": 38.90373257,
+    "lng": -77.26127388
+  },
+  "9579 BRADDOCK RD FAIRFAX VA 22032": {
+    "lat": 38.81768136,
+    "lng": -77.27584918
+  },
+  "4300 BACKLICK RD ANNANDALE VA 22003": {
+    "lat": 38.83072177,
+    "lng": -77.1949669
+  },
+  "5230 PORT ROYAL ROAD SPRINGFIELD VA 22151": {
+    "lat": 38.80941158,
+    "lng": -77.22233636
+  },
+  "6715A  ARLINGTON BLVD FALLS CHURCH VA 22042": {
+    "lat": 38.86892974,
+    "lng": -77.17522853
+  },
+  "8414 OLD KEENE MILL RD SPRINGFIELD VA 22152": {
+    "lat": 38.77995803,
+    "lng": -77.23587309
+  },
+  "6053 LEESBURG PIKE FALLS CHURCH VA 22041": {
+    "lat": 38.85585211,
+    "lng": -77.14078535
+  },
+  "5841 NORTHWASHINGTON BOULEVARD ARLINGTON VA 22205": {
+    "lat": 38.88519645,
+    "lng": -77.14043531
+  },
+  "1312 CHAIN BRIDGE ROAD MCLEAN VA 22101": {
+    "lat": 38.93988438,
+    "lng": -77.17519892
+  },
+  "6224 OLD DOMINION DRIVE MCLEAN VA 22101": {
+    "lat": 38.9198267,
+    "lng": -77.14991807
+  },
+  "2260A HUNTERS WOODS PLZ RESTON VA 20191": {
+    "lat": 38.93713898,
+    "lng": -77.36209937
+  },
+  "4720-B LEE HWY ARLINGTON VA 22207": {
+    "lat": 38.8974835,
+    "lng": -77.12270203
+  },
+  "4515 DUKE STREET ALEXANDRIA VA 22304": {
+    "lat": 38.81269422,
+    "lng": -77.11021868
+  },
+  "7100 SILVER LAKE BOULEVARD ALEXANDRIA VA 22315": {
+    "lat": 38.76437654,
+    "lng": -77.15426997
+  },
+  "3130 LEE HWY ARLINGTON VA 22201": {
+    "lat": 38.89565736,
+    "lng": -77.09792986
+  },
+  "6100 ROSE HILL DRIVE ALEXANDRIA VA 22310": {
+    "lat": 38.78536238,
+    "lng": -77.12251349
+  },
+  "2820 COLUMBIA PIKE ARLINGTON VA 22204": {
+    "lat": 38.86214799,
+    "lng": -77.08651457
+  },
+  "3614 KING STREET ALEXANDRIA VA 22302": {
+    "lat": 38.82831252,
+    "lng": -77.09083247
+  },
+  "13926 LEE HWY CENTREVILLE VA 20120": {
+    "lat": 38.83925653,
+    "lng": -77.42931661
+  },
+  "603 ELDEN ST HERNDON VA 20170": {
+    "lat": 38.96870351,
+    "lng": -77.38136537
+  },
+  "3301 NEW MEXICO AVE NW WASHINGTON DC 20016": {
+    "lat": 38.93350915,
+    "lng": -77.08551506
+  },
+  "1301 S JOYCE ST ARLINGTON VA 22202": {
+    "lat": 38.8622321,
+    "lng": -77.0629256
+  },
+  "10134 RIVER RD POTOMAC MD 20854": {
+    "lat": 39.0167589,
+    "lng": -77.20930994
+  },
+  "10101 RIVER RD POTOMAC MD 20854": {
+    "lat": 39.01769891,
+    "lng": -77.20771331
+  },
+  "1517 MOUNT VERNON AVE ALEXANDRIA VA 22301": {
+    "lat": 38.8205172,
+    "lng": -77.05750592
+  },
+  "9372 RICHMOND HIGHWAY LORTON VA 22079": {
+    "lat": 38.70656216,
+    "lng": -77.20526585
+  },
+  "6717 RICHMOND HWY ALEXANDRIA VA 22306": {
+    "lat": 38.77164851,
+    "lng": -77.08066167
+  },
+  "1217 22ND ST NW WASHINGTON DC 20037": {
+    "lat": 38.90546721,
+    "lng": -77.04861385
+  },
+  "6906 ARLINGTON RD BETHESDA MD 20814": {
+    "lat": 38.9784974,
+    "lng": -77.09921403
+  },
+  "3524 CONNECTICUT AVE NW WASHINGTON DC 20008": {
+    "lat": 38.93649157,
+    "lng": -77.05935619
+  },
+  "1815 CONNECTICUT AVE NW WASHINGTON DC 20009": {
+    "lat": 38.91485948,
+    "lng": -77.04586508
+  },
+  "7629 RICHMOND HWY ALEXANDRIA VA 22306": {
+    "lat": 38.74989418,
+    "lng": -77.082449
+  },
+  "46965 CEDAR LAKE PLZ STERLING VA 20164": {
+    "lat": 39.01717761,
+    "lng": -77.37531461
+  },
+  "1325 14TH ST NW WASHINGTON DC 20005": {
+    "lat": 38.9077003,
+    "lng": -77.03190415
+  },
+  "1155 F STREET NW WASHINGTON DC 20004": {
+    "lat": 38.89761139,
+    "lng": -77.0278802
+  },
+  "1306 U ST. NW WASHINGTON DC 20009": {
+    "lat": 38.91685498,
+    "lng": -77.02984433
+  },
+  "25421 EASTERN MARKETPLACE PLZ CHANTILLY VA 20152": {
+    "lat": 38.91370919,
+    "lng": -77.48918163
+  },
+  "801 7TH ST NW WASHINGTON DC 20001": {
+    "lat": 38.89997604,
+    "lng": -77.02168061
+  },
+  "12601 SMOKETOWN RD WOODBRIDGE VA 22192": {
+    "lat": 38.68005107,
+    "lng": -77.32005686
+  },
+  "20800 GREAT FALLS PLAZA STERLING VA 20165": {
+    "lat": 39.03928927,
+    "lng": -77.35732891
+  },
+  "2041 GEORGIA AVE NW FIRST FL WASHINGTON DC 20060": {
+    "lat": 38.91748942,
+    "lng": -77.02006551
+  },
+  "9271 SUDLEY RD MANASSAS VA 20110": {
+    "lat": 38.75637489,
+    "lng": -77.46598328
+  },
+  "50 MASSACHUSETTS AVE WASHINGTON DC 20002": {
+    "lat": 38.8971045,
+    "lng": -77.0055644
+  },
+  "7968 FORT HUNT RD ALEXANDRIA VA 22308": {
+    "lat": 38.74099148,
+    "lng": -77.05590174
+  },
+  "111 MICHIGAN AVE NW WASHINGTON DC 20010": {
+    "lat": 38.92744915,
+    "lng": -77.01351799
+  },
+  "5600 GEORGIA AVE NW WASHINGTON DC 20011": {
+    "lat": 38.95779022,
+    "lng": -77.02852995
+  },
+  "5437 Urbana Pike Frederick MD 21704-7275": {
+    "lat": 39.3821091,
+    "lng": -77.3975521
+  },
+  "2912 chain bridge road oakton VA 22124": {
+    "lat": 38.8827931,
+    "lng": -77.2989656
+  },
+  "3053 nutley street fairfax VA 22030": {
+    "lat": 38.8706372,
+    "lng": -77.2609133
+  },
+  "337 maple avenue east vienna VA 22180": {
+    "lat": 38.90486200000001,
+    "lng": -77.2587449
+  },
+  "10090 fairfax boulevard, plantation parkway fairfax VA 22030": {
+    "lat": 38.8628212,
+    "lng": -77.293086
+  },
+  "11003 lee highway fairfax VA 22030": {
+    "lat": 38.8520656,
+    "lng": -77.32499399999999
+  },
+  "3921 prosperity ave fairfax VA 22031": {
+    "lat": 38.838416,
+    "lng": -77.2449158
+  },
+  "11160 south lakes drive reston VA 20191": {
+    "lat": 38.9385517,
+    "lng": -77.3305879
+  },
+  "1150 west broad street falls church VA 22046": {
+    "lat": 38.8984549,
+    "lng": -77.1855276
+  },
+  "1906 reston metro plaza, suite 100 reston VA 20190": {
+    "lat": 38.9486448,
+    "lng": -77.33912959999999
+  },
+  "7859 heritage drive annandale VA 22003": {
+    "lat": 38.8250473,
+    "lng": -77.2141987
+  },
+  "8928 burke lake road springfield VA 22151": {
+    "lat": 38.8098671,
+    "lng": -77.2532224
+  },
+  "500 s washington street falls church VA 22046": {
+    "lat": 38.8798176,
+    "lng": -77.177723
+  },
+  "134 west broad street falls church VA 22046": {
+    "lat": 38.8832288,
+    "lng": -77.17192709999999
+  },
+  "sunset hills drive 11670 plaza america drive reston VA 20170": {
+    "lat": 38.9520968,
+    "lng": -77.3494016
+  },
+  "6637 arlington boulevard falls church VA 22042": {
+    "lat": 38.8692826,
+    "lng": -77.1729156
+  },
+  "7205 little river turnpike, located on the corner of backlick and little river turnpike annandale VA 22003": {
+    "lat": 38.8295276,
+    "lng": -77.1937162
+  },
+  "12734 shoppes lane fairfax VA 22033": {
+    "lat": 38.8607756,
+    "lng": -77.3883354
+  },
+  "1452 chain bridge road mclean VA 22101": {
+    "lat": 38.9331108,
+    "lng": -77.1801041
+  },
+  "10301 new guinea rd fairfax VA 22032": {
+    "lat": 38.7983683,
+    "lng": -77.3010302
+  },
+  "13031 lee-jackson highway fairfax VA 22033": {
+    "lat": 38.878796,
+    "lng": -77.397865
+  },
+  "264 cedar lane southeast cedar park and shop vienna VA 22180": {
+    "lat": 38.8880023,
+    "lng": -77.24382589999999
+  },
+  "yorktown center, 8124 arlington boulevard falls church VA 22042": {
+    "lat": 38.8669769,
+    "lng": -77.2262989
+  },
+  "2905 district ave s ste 400 fairfax VA 22031": {
+    "lat": 38.8724667,
+    "lng": -77.22940129999999
+  },
+  "10390 willard way fairfax VA 22030": {
+    "lat": 38.84883,
+    "lng": -77.3035336
+  },
+  "8117 leesburg pike vienna VA 22182": {
+    "lat": 38.9147399,
+    "lng": -77.22637979999999
   }
 }
