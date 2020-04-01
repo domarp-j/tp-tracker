@@ -32,6 +32,7 @@ const LIMITED_STOCK = "LIMITED_STOCK";
 const LIMITED_STOCK_SEE_STORE = "LIMITED_STOCK_SEE_STORE";
 const NOT_SOLD_IN_STORE = "NOT_SOLD_IN_STORE";
 const OUT_OF_STOCK = "OUT_OF_STOCK";
+const NOT_AVAILABLE = "NOT_AVAILABLE";
 const UNKNOWN = "UNKNOWN";
 const DISCONTINUED = "DISCONTINUED";
 
@@ -55,9 +56,10 @@ const SORT_WEIGHT = {
   [LIMITED_STOCK]: 2,
   [LIMITED_STOCK_SEE_STORE]: 2,
   [NOT_SOLD_IN_STORE]: 3,
-  [OUT_OF_STOCK]: 4,
-  [UNKNOWN]: 5,
-  [DISCONTINUED]: 5,
+  [OUT_OF_STOCK]: 3,
+  [NOT_AVAILABLE]: 3,
+  [UNKNOWN]: 4,
+  [DISCONTINUED]: 4,
 };
 
 const BADGE_CLASSES = "text-white text-sm font-semibold py-1 px-2 rounded";
@@ -71,11 +73,15 @@ const AVAILABILITY_BADGE = {
     <div className={`bg-yellow-600 ${BADGE_CLASSES}`}>Limited Stock</div>
   ),
   [NOT_SOLD_IN_STORE]: (
-    <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Not Sold in Store</div>
+    <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
   ),
   [OUT_OF_STOCK]: (
     <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
   ),
+  [NOT_AVAILABLE]: (
+    <div className={`bg-gray-600 ${BADGE_CLASSES}`}>Out of Stock</div>
+  ),
+  // All remaining availabilities are filtered out
 };
 
 const STORES = {
@@ -103,10 +109,7 @@ const formatLocations = locations =>
   locations.map(loc => ({
     ...loc,
     store: STORES[loc.store.toUpperCase()],
-    available:
-      loc.available === NOT_SOLD_IN_STORE
-        ? toScreamingSnake(OUT_OF_STOCK)
-        : toScreamingSnake(loc.available),
+    available: toScreamingSnake(loc.available),
     type: loc.type || TP,
     lat: loc.lat ? parseFloat(loc.lat) : loc.lat,
     lng: loc.lng ? parseFloat(loc.lng) : loc.lng,
@@ -320,6 +323,10 @@ const IndexPage = () => {
       if (!res.data) return; // TODO: Error handling
 
       const locations = compose(
+        locations => {
+          console.log(locations.map(loc => loc.available));
+          return locations;
+        },
         sortLocations,
         filterInvalidLocations,
         formatLocations
@@ -417,9 +424,9 @@ const IndexPage = () => {
               <h2 className="text-md p-2 my-4">
                 Tip:{" "}
                 <strong>
-                  Store inventory(especially Target) can be innacurate.
-                </strong>{" "}
-                If you can call ahead and post availability in this site, you
+                  Store inventory (especially Target) can be inaccurate
+                </strong>
+                . If you can call ahead and post availability in this site, you
                 can prevent people from going out when they don't need to,{" "}
                 <em>and maybe prevent the spread.</em>
               </h2>
