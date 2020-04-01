@@ -103,6 +103,9 @@ const isInvalidAvailability = available =>
 
 const toScreamingSnake = str => str.toUpperCase().replace(/\s/g, "_");
 
+// Apply weights to each availability type for sorting purposes
+const sortWeight = available => SORT_WEIGHT[available] || 1000;
+
 // Map through locations and make some formatting changes
 // Also convert NOT_SOLD_IN_STORE availability to OUT_OF_STOCK
 const formatLocations = locations =>
@@ -123,7 +126,7 @@ const filterInvalidLocations = locations =>
 // Sort locations based on weights specified in SORT_WEIGHT mapping
 const sortLocations = locations =>
   locations.sort(
-    (locA, locB) => SORT_WEIGHT[locA.available] - SORT_WEIGHT[locB.available]
+    (locA, locB) => sortWeight(locA.available) - sortWeight(locB.available)
   );
 
 // Filter locations based on a given product

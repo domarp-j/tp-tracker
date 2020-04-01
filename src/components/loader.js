@@ -4,11 +4,11 @@ import "./loader.css";
 import tpRoll from "../images/tp-roll.png";
 
 const Loader = () => {
-  const [error, displayError] = useState(false);
+  const [longLoadTime, displayLoadMessage] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      displayError(true);
+      displayLoadMessage(true);
     }, 15000);
 
     return () => {
@@ -35,15 +35,16 @@ const Loader = () => {
             width: 200,
           }}
         />
-        {!error && (
-          <div className="mt-5">Gathering TP...This might take a while...</div>
+        {!longLoadTime && (
+          <div className="mt-5">Finding toilet paper near you. Sit tight!</div>
         )}
-        {error && (
+        {longLoadTime && (
           <>
-            <div className="mt-5 text-left">We broke something. Apologies!</div>
+            <div className="mt-5 text-left">
+              We're taking a bit longer than expected. Apologies!
+            </div>
             <div className="mt-3 text-left">
               We're working to get you to toilet paper as fast as possible.
-              Please come back in a few minutes.
             </div>
           </>
         )}
