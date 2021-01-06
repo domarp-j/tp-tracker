@@ -6,7 +6,7 @@
   "author": "Sepehr Sobhani & Pramod Jacob",
   "dependencies": {
     "@react-google-maps/api": "^1.8.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "blueimp-md5": "^2.13.0",
     "dayjs": "^1.8.23",
     "firebase": "^7.13.1",
